@@ -252,6 +252,9 @@ const POSITIONS = [
 const els = {
   question: document.querySelector("#question"),
   questionCount: document.querySelector("#question-count"),
+  modeButtons: document.querySelectorAll(".question-mode-tabs button"),
+  meditationPanel: document.querySelector("#meditation-panel"),
+  writePanel: document.querySelector("#write-panel"),
   reversals: document.querySelector("#reversals"),
   shuffleButton: document.querySelector("#shuffle-button"),
   deckMini: document.querySelector("#deck-mini"),
@@ -272,6 +275,7 @@ const els = {
 
 const state = {
   phase: "idle",
+  questionMode: "meditation",
   draws: [],
   revealed: 0,
   cutIndex: null
@@ -305,6 +309,42 @@ function updateSteps(active) {
     item.classList.toggle("is-active", step === active);
     item.classList.toggle("is-done", step < active);
   });
+}
+
+function activeQuestion() {
+  return state.questionMode === "write" ? els.question.value.trim() : "";
+}
+
+function syncIdleCopy() {
+  if (state.questionMode === "meditation") {
+    els.statusText.textContent = "请静心默念你的问题，准备好后开始抽牌";
+    els.receipt.textContent = "问题只留在心中，不会被记录";
+    els.shuffleButton.querySelector("span").textContent = "默念完成，开始抽牌";
+  } else {
+    els.statusText.textContent = "写下你想观察的问题，准备好后开始抽牌";
+    els.receipt.textContent = "输入内容仅在当前页面中使用";
+    els.shuffleButton.querySelector("span").textContent = "输入完成，开始抽牌";
+  }
+}
+
+function setQuestionMode(mode) {
+  if (state.phase !== "idle" || !["meditation", "write"].includes(mode)) return;
+  state.questionMode = mode;
+  const isMeditation = mode === "meditation";
+  els.meditationPanel.hidden = !isMeditation;
+  els.writePanel.hidden = isMeditation;
+  els.modeButtons.forEach((button) => {
+    const selected = button.dataset.mode === mode;
+    button.classList.toggle("is-active", selected);
+    button.setAttribute("aria-selected", String(selected));
+  });
+  syncIdleCopy();
+  if (!isMeditation) window.setTimeout(() => els.question.focus(), 0);
+}
+
+function setQuestionControlsDisabled(disabled) {
+  els.question.disabled = disabled;
+  els.modeButtons.forEach((button) => { button.disabled = disabled; });
 }
 
 function initialCardMarkup(position, index) {
@@ -389,8 +429,8 @@ function finishReading() {
   els.instruction.textContent = "三张图像已经形成一条阅读线索";
   updateSteps(4);
 
-  const question = els.question.value.trim();
-  els.questionEcho.textContent = question ? `“${question}”` : "";
+  const question = activeQuestion();
+  els.questionEcho.textContent = question ? `“${question}”` : "本次以心中默念的问题为意向。";
   els.interpretations.innerHTML = state.draws.map((draw, index) => {
     const orientation = draw.reversed ? "逆位" : "正位";
     const meaning = draw.reversed ? draw.card.reversed : draw.card.upright;
@@ -424,9 +464,8 @@ async function startShuffle() {
   els.deckMini.classList.add("is-shuffling");
   els.statusText.textContent = "正在混合 22 张大阿卡那";
   els.receipt.textContent = "Fisher–Yates 洗牌进行中";
-  els.question.disabled = true;
+  setQuestionControlsDisabled(true);
   els.reversals.disabled = true;
-  document.querySelectorAll(".prompt-chips button").forEach((button) => { button.disabled = true; });
   els.result.hidden = true;
   updateSteps(2);
 
@@ -447,12 +486,9 @@ function resetReading() {
   state.revealed = 0;
   state.cutIndex = null;
   els.shuffleButton.disabled = false;
-  els.shuffleButton.querySelector("span").textContent = "洗牌并切牌";
-  els.question.disabled = false;
+  setQuestionControlsDisabled(false);
   els.reversals.disabled = false;
-  document.querySelectorAll(".prompt-chips button").forEach((button) => { button.disabled = false; });
-  els.statusText.textContent = "写下问题，或保留空白作一次开放观察";
-  els.receipt.textContent = "使用浏览器加密随机数，抽取不预设结果";
+  syncIdleCopy();
   els.instruction.textContent = "洗牌后，依次翻开三张牌";
   els.result.hidden = true;
   renderEmptyTable();
@@ -461,9 +497,9 @@ function resetReading() {
 }
 
 function buildReadingText() {
-  const question = els.question.value.trim();
+  const question = activeQuestion();
   const lines = ["MYSTERIUM · 三张牌释读"];
-  if (question) lines.push(`问题：${question}`);
+  lines.push(question ? `问题：${question}` : "问题：心中默念");
   state.draws.forEach((draw, index) => {
     const orientation = draw.reversed ? "逆位" : "正位";
     const meaning = draw.reversed ? draw.card.reversed : draw.card.upright;
@@ -510,12 +546,8 @@ els.question.addEventListener("input", () => {
   els.questionCount.textContent = `${els.question.value.length} / 120`;
 });
 
-document.querySelectorAll(".prompt-chips button").forEach((button) => {
-  button.addEventListener("click", () => {
-    els.question.value = button.dataset.prompt;
-    els.question.dispatchEvent(new Event("input"));
-    els.question.focus();
-  });
+els.modeButtons.forEach((button) => {
+  button.addEventListener("click", () => setQuestionMode(button.dataset.mode));
 });
 
 els.shuffleButton.addEventListener("click", startShuffle);

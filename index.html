@@ -70,21 +70,45 @@
 
         <div class="controls-grid">
           <div class="question-block">
-            <label for="question">你希望从哪个问题开始？</label>
-            <div class="input-wrap">
-              <textarea
-                id="question"
-                maxlength="120"
-                rows="2"
-                placeholder="例如：我该如何看待眼前这次选择？"
-              ></textarea>
-              <span id="question-count" aria-live="polite">0 / 120</span>
+            <div class="question-mode-tabs" role="tablist" aria-label="提问方式">
+              <button
+                class="is-active"
+                id="mode-meditation"
+                type="button"
+                role="tab"
+                aria-selected="true"
+                aria-controls="meditation-panel"
+                data-mode="meditation"
+              >冥想问题</button>
+              <button
+                id="mode-write"
+                type="button"
+                role="tab"
+                aria-selected="false"
+                aria-controls="write-panel"
+                data-mode="write"
+              >输入问题</button>
             </div>
-            <div class="prompt-chips" aria-label="问题方向">
-              <button type="button" data-prompt="我该如何理解目前这段关系？">关系</button>
-              <button type="button" data-prompt="我在当前事业阶段最需要看见什么？">事业</button>
-              <button type="button" data-prompt="面对眼前的选择，我忽略了什么？">选择</button>
-              <button type="button" data-prompt="此刻的我最需要整合什么？">自我</button>
+
+            <div class="question-mode-panel meditation-panel" id="meditation-panel" role="tabpanel" aria-labelledby="mode-meditation">
+              <span class="meditation-mark" aria-hidden="true">☽</span>
+              <div>
+                <strong>把问题安静地放在心里</strong>
+                <p>闭上眼，缓慢呼吸三次，在心中默念你的问题。无需输入，准备好后即可开始抽牌。</p>
+              </div>
+            </div>
+
+            <div class="question-mode-panel write-panel" id="write-panel" role="tabpanel" aria-labelledby="mode-write" hidden>
+              <label for="question">你希望从哪个问题开始？</label>
+              <div class="input-wrap">
+                <textarea
+                  id="question"
+                  maxlength="120"
+                  rows="2"
+                  placeholder="例如：我该如何看待眼前这次选择？"
+                ></textarea>
+                <span id="question-count" aria-live="polite">0 / 120</span>
+              </div>
             </div>
           </div>
 
@@ -121,11 +145,11 @@
           </div>
           <div class="ritual-status">
             <small>当前状态</small>
-            <strong id="status-text" aria-live="polite">写下问题，或保留空白作一次开放观察</strong>
-            <span id="shuffle-receipt">使用浏览器加密随机数，抽取不预设结果</span>
+            <strong id="status-text" aria-live="polite">请静心默念你的问题，准备好后开始抽牌</strong>
+            <span id="shuffle-receipt">问题只留在心中，不会被记录</span>
           </div>
           <button class="primary-button" id="shuffle-button" type="button">
-            <span>洗牌并切牌</span>
+            <span>默念完成，开始抽牌</span>
             <b aria-hidden="true">→</b>
           </button>
         </div>
@@ -182,7 +206,7 @@
     </main>
 
     <footer>
-      <span>MYSTERIUM · DEMO 0.1</span>
+      <span>MYSTERIUM · DEMO 0.2</span>
       <span>牌面：Jean Dodal 马赛塔罗 · CC0</span>
       <span>为清醒的自我观察而作</span>
     </footer>
