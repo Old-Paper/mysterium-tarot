@@ -490,6 +490,30 @@ footer {
   display: block;
 }
 
+.question-tutorial {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 15px;
+  align-items: start;
+  margin-top: 2px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-soft);
+}
+
+.question-tutorial small {
+  color: var(--gold);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+
+.question-tutorial p {
+  margin: -3px 0 0;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.8;
+}
+
 .meditation-panel strong {
   color: var(--paper);
   font-size: 13px;
@@ -517,7 +541,7 @@ footer {
 textarea {
   display: block;
   width: 100%;
-  min-height: 68px;
+  min-height: 112px;
   padding: 13px 64px 13px 14px;
   resize: vertical;
   color: var(--ink);

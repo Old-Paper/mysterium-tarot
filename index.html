@@ -91,9 +91,13 @@
 
             <div class="question-mode-panel meditation-panel" id="meditation-panel" role="tabpanel" aria-labelledby="mode-meditation">
               <span class="meditation-mark" aria-hidden="true">☽</span>
-              <div>
+              <div class="meditation-intro">
                 <strong>把问题安静地放在心里</strong>
                 <p>闭上眼，缓慢呼吸三次，在心中默念你的问题。无需输入，准备好后即可开始抽牌。</p>
+              </div>
+              <div class="question-tutorial">
+                <small>提问提示</small>
+                <p>问题要具体、单一，并写清对象、时间与结果标准。可用：“在×月×日前，我能否通过××方式达成××目标？主要阻碍与结果如何？”</p>
               </div>
             </div>
 
@@ -103,8 +107,8 @@
                 <textarea
                   id="question"
                   maxlength="120"
-                  rows="2"
-                  placeholder="例如：我该如何看待眼前这次选择？"
+                  rows="4"
+                  placeholder="问题要具体、单一，并写清对象、时间与结果标准。可用：“在×月×日前，我能否通过××方式达成××目标？主要阻碍与结果如何？”"
                 ></textarea>
                 <span id="question-count" aria-live="polite">0 / 120</span>
               </div>
