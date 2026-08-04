@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#17140f" />
     <meta
       name="description"
-      content="以 18 世纪 Jean Dodal 马赛塔罗图像为基础的三张牌体验 Demo。"
+      content="以 Jean Dodal 马赛塔罗大阿卡那为基础，支持单张、三张、十字、马蹄、二选一、凯尔特十字与十二宫的多牌阵体验。"
     />
     <title>Mysterium · 古典马赛塔罗 Demo</title>
     <link rel="icon" href="assets/seal.svg" type="image/svg+xml" />
@@ -53,11 +53,32 @@
         </div>
       </section>
 
-      <section class="reading-shell" id="reading-table" aria-labelledby="table-title">
+      <section class="spread-library" id="spread-library" aria-labelledby="spread-library-title">
+        <div class="spread-library-head">
+          <div>
+            <p class="section-kicker">CHOOSE A SPREAD</p>
+            <h2 id="spread-library-title">先按问题复杂度选择牌阵</h2>
+          </div>
+          <p>先固定问题与牌位，再洗牌。牌越多不代表越准确，只代表观察维度更多。</p>
+        </div>
+        <div class="spread-quick-guide" aria-label="牌阵选择速查">
+          <div><small>只要一个焦点</small><strong>单张牌</strong></div>
+          <div><small>快速看清过程</small><strong>三张牌阵</strong></div>
+          <div><small>分析阻碍与条件</small><strong>五张十字／马蹄</strong></div>
+          <div><small>比较两个方案</small><strong>二选一牌阵</strong></div>
+          <div><small>复杂事件或人生领域</small><strong>凯尔特十字／十二宫</strong></div>
+        </div>
+        <div class="spread-grid" id="spread-grid"></div>
+        <p class="spread-method-note">
+          除有明确文献来源者外，现代牌阵并没有唯一标准版本；本站会在抽牌前完整显示本次采用的牌位定义。
+        </p>
+      </section>
+
+      <section class="reading-shell" id="reading-table" aria-labelledby="table-title" tabindex="-1">
         <div class="table-head">
           <div>
-            <p class="section-kicker">THE THREE-CARD TABLE</p>
-            <h2 id="table-title">三张牌桌</h2>
+            <p class="section-kicker" id="table-kicker">THE THREE-CARD TABLE</p>
+            <h2 id="table-title">三张牌阵</h2>
           </div>
           <ol class="steps" aria-label="占牌步骤">
             <li class="is-active" data-step="1"><span>1</span>凝神</li>
@@ -124,10 +145,17 @@
               </div>
             </div>
             <div class="method-row">
-              <span class="method-icon" aria-hidden="true">ⅠⅡⅢ</span>
+              <span class="method-icon" aria-hidden="true">⌖</span>
               <div>
                 <small>牌位</small>
-                <strong>来处 · 当下 · 趋向</strong>
+                <strong id="method-spread-positions">来处 · 当下 · 趋向</strong>
+              </div>
+            </div>
+            <div class="method-row">
+              <span class="method-icon" id="method-spread-count" aria-hidden="true">Ⅲ</span>
+              <div>
+                <small>当前牌阵</small>
+                <strong id="method-spread-name">三张牌阵 · 简单</strong>
               </div>
             </div>
             <label class="toggle-row">
@@ -136,6 +164,14 @@
                 <strong>纳入图像方向</strong>
               </span>
               <input id="reversals" type="checkbox" checked />
+              <span class="toggle" aria-hidden="true"></span>
+            </label>
+            <label class="toggle-row theme-toggle-row" id="theme-toggle-row" hidden>
+              <span>
+                <small>主题牌</small>
+                <strong>增加第 13 张总主题</strong>
+              </span>
+              <input id="theme-card" type="checkbox" />
               <span class="toggle" aria-hidden="true"></span>
             </label>
             <p class="micro-note">逆位有 18 世纪文献先例；关闭也不影响牌法完整性。</p>
@@ -160,19 +196,19 @@
         <div class="draw-heading">
           <div>
             <span class="hairline"></span>
-            <p id="draw-instruction">洗牌后，依次翻开三张牌</p>
+            <p id="draw-instruction">洗牌后，依次翻开 3 张牌</p>
             <span class="hairline"></span>
           </div>
           <small>点击牌背翻牌</small>
         </div>
 
-        <div class="card-grid" id="card-grid" aria-label="三张牌位"></div>
+        <div class="card-grid layout-three" id="card-grid" aria-label="三张牌位"></div>
 
         <section class="reading-result" id="reading-result" aria-labelledby="result-title" tabindex="-1" hidden>
           <div class="result-heading">
             <div>
               <p class="section-kicker">YOUR READING</p>
-              <h2 id="result-title">把三张牌连成一句话</h2>
+              <h2 id="result-title">把三张牌连成一个过程</h2>
             </div>
             <button class="secondary-button" id="copy-reading" type="button">复制释读</button>
           </div>
@@ -192,7 +228,7 @@
               <p class="section-kicker">CONTINUE WITH AI</p>
               <h3 id="ai-prompt-title">复制完整牌阵，继续向 AI 提问</h3>
               <p>
-                提示词会整理问题、牌阵定义、三张牌的牌位与正逆位，并要求 AI 区分传统象征、组合推论与现实事实。
+                <span id="ai-prompt-description">提示词会整理问题、牌阵定义、全部牌位与正逆位，并要求 AI 区分传统象征、组合推论与现实事实。</span>
               </p>
               <div class="ai-prompt-includes" aria-label="提示词包含的内容">
                 <span>问题</span><span>牌阵</span><span>牌位</span><span>正逆位</span><span>解读边界</span>
@@ -218,7 +254,7 @@
         <div class="provenance-copy">
           <p>
             现存史料把塔罗的早期形态指向 15 世纪北意大利的纸牌游戏；它与占卜的系统关联，
-            是更晚才被记录下来的。这个 Demo 因而区分<strong>历史牌面</strong>与<strong>现代三张牌框架</strong>。
+            是更晚才被记录下来的。这个 Demo 因而区分<strong>历史牌面</strong>、<strong>有文献来源的牌法</strong>与<strong>现代牌阵框架</strong>。
           </p>
           <button class="inline-link" id="open-notes-secondary" type="button">查看采用的来源与边界 →</button>
         </div>
@@ -226,7 +262,7 @@
     </main>
 
     <footer>
-      <span>MYSTERIUM · DEMO 0.2</span>
+      <span>MYSTERIUM · DEMO 0.3</span>
       <span>牌面：Jean Dodal 马赛塔罗 · CC0</span>
       <span>为清醒的自我观察而作</span>
     </footer>
@@ -248,7 +284,10 @@
               Demo 使用 Jean Dodal 的马赛体系大阿卡那图像，原牌约制作于 1701 年。
               图像整理版由 OpenGameArt 以 CC0 提供。马赛体系保留了杯、剑、杖、币与 22 张王牌的欧洲传统结构。
             </p>
-            <a href="https://opengameart.org/content/tarot-cards-major-arcana" target="_blank" rel="noreferrer">查看牌面来源</a>
+            <div class="source-links">
+              <a href="https://opengameart.org/content/tarot-cards-major-arcana" target="_blank" rel="noreferrer">查看牌面来源</a>
+              <a href="https://www.britishmuseum.org/collection/term/BIOG179590" target="_blank" rel="noreferrer">British Museum · Jean Dodal</a>
+            </div>
           </div>
         </section>
         <section>
@@ -268,11 +307,15 @@
         <section>
           <span class="note-number">03</span>
           <div>
-            <h3>本 Demo 的三张牌法</h3>
+            <h3>牌阵来源与固定定义</h3>
             <p>
-              “来处／当下／趋向”是便于入门的现代阅读框架，不是中世纪定式。这里把“未来”写成“趋向”，
-              因为第三张牌反映的是在当前条件延续时值得观察的方向，并非不可改变的预言。
+              单张、三张、五张十字、马蹄、二选一与十二宫在现代实践中存在多种位置版本；本站会在抽牌前列明本次采用的固定定义。
+              “凯尔特十字”的十个主体位置及 42 张全景法参考 Waite 1911 年公开文本；后者必须使用完整 78 张牌。
             </p>
+            <div class="source-links">
+              <a href="https://en.wikisource.org/wiki/The_Pictorial_Key_to_the_Tarot/Part_3" target="_blank" rel="noreferrer">Waite · 牌阵原文</a>
+              <a href="https://www.daneel.franken.de/tarot/ATA/courses/astrological/ast.pdf" target="_blank" rel="noreferrer">十二宫位置参考</a>
+            </div>
           </div>
         </section>
         <section>
