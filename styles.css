@@ -67,8 +67,13 @@ textarea:focus-visible {
   transform: translateY(-150%);
 }
 
-.skip-link:focus {
+.skip-link:focus-visible {
   transform: translateY(0);
+}
+
+.reading-complete .skip-link {
+  visibility: hidden;
+  transform: translateY(-150%);
 }
 
 .grain {
@@ -1031,6 +1036,10 @@ textarea::placeholder {
   animation: result-in 600ms ease both;
 }
 
+.reading-result:focus {
+  outline: none;
+}
+
 @keyframes result-in {
   from { opacity: 0; transform: translateY(16px); }
 }
@@ -1142,6 +1151,79 @@ textarea::placeholder {
   color: var(--gold-bright);
   font-size: 11px;
   font-weight: 500;
+}
+
+.ai-prompt-panel {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  gap: 20px;
+  align-items: center;
+  margin-top: 18px;
+  padding: 22px;
+  background:
+    linear-gradient(115deg, rgba(196, 163, 106, 0.1), transparent 54%),
+    rgba(5, 5, 4, 0.24);
+  border: 1px solid var(--gold-dark);
+}
+
+.ai-prompt-mark {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: var(--gold-bright);
+  border: 1px solid var(--gold-dark);
+  border-radius: 50%;
+  font-family: var(--serif-latin);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.ai-prompt-copy .section-kicker {
+  margin: 0 0 5px;
+  font-size: 8px;
+}
+
+.ai-prompt-copy h3 {
+  margin: 0;
+  color: var(--paper);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.ai-prompt-copy > p:not(.section-kicker, .ai-prompt-note) {
+  max-width: 620px;
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.8;
+}
+
+.ai-prompt-includes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 11px;
+}
+
+.ai-prompt-includes span {
+  padding: 3px 7px;
+  color: #9f927c;
+  border: 1px solid var(--line);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+}
+
+.ai-prompt-note {
+  margin: 10px 0 0;
+  color: var(--dim);
+  font-size: 8px;
+  line-height: 1.7;
+}
+
+.ai-copy-button {
+  min-width: 150px;
 }
 
 .result-actions {
@@ -1363,6 +1445,15 @@ code {
   .interpretations {
     grid-template-columns: 1fr;
   }
+
+  .ai-prompt-panel {
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+
+  .ai-copy-button {
+    grid-column: 2;
+    justify-self: start;
+  }
 }
 
 @media (max-width: 700px) {
@@ -1494,6 +1585,23 @@ code {
 
   .result-actions {
     flex-direction: column;
+  }
+
+  .ai-prompt-panel {
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: 14px;
+    padding: 18px;
+  }
+
+  .ai-prompt-mark {
+    width: 34px;
+    height: 34px;
+    font-size: 8px;
+  }
+
+  .ai-copy-button {
+    grid-column: 1 / -1;
+    width: 100%;
   }
 
   footer {

@@ -168,7 +168,7 @@
 
         <div class="card-grid" id="card-grid" aria-label="三张牌位"></div>
 
-        <section class="reading-result" id="reading-result" aria-labelledby="result-title" hidden>
+        <section class="reading-result" id="reading-result" aria-labelledby="result-title" tabindex="-1" hidden>
           <div class="result-heading">
             <div>
               <p class="section-kicker">YOUR READING</p>
@@ -186,6 +186,23 @@
               <strong id="action-text"></strong>
             </div>
           </div>
+          <section class="ai-prompt-panel" aria-labelledby="ai-prompt-title">
+            <div class="ai-prompt-mark" aria-hidden="true">AI</div>
+            <div class="ai-prompt-copy">
+              <p class="section-kicker">CONTINUE WITH AI</p>
+              <h3 id="ai-prompt-title">复制完整牌阵，继续向 AI 提问</h3>
+              <p>
+                提示词会整理问题、牌阵定义、三张牌的牌位与正逆位，并要求 AI 区分传统象征、组合推论与现实事实。
+              </p>
+              <div class="ai-prompt-includes" aria-label="提示词包含的内容">
+                <span>问题</span><span>牌阵</span><span>牌位</span><span>正逆位</span><span>解读边界</span>
+              </div>
+              <p class="ai-prompt-note" id="ai-prompt-note"></p>
+            </div>
+            <button class="primary-button ai-copy-button" id="copy-ai-prompt" type="button">
+              <span>复制 AI 提示词</span><b aria-hidden="true">→</b>
+            </button>
+          </section>
           <div class="result-actions">
             <p>塔罗适合帮助整理感受，不替代医疗、法律、财务或人生重大决定的专业意见。</p>
             <button class="text-button reset-button" id="reset-button" type="button">重新起牌 ↺</button>
