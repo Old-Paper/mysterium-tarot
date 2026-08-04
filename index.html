@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#17140f" />
+    <meta
+      name="description"
+      content="以 18 世纪 Jean Dodal 马赛塔罗图像为基础的三张牌体验 Demo。"
+    />
+    <title>Mysterium · 古典马赛塔罗 Demo</title>
+    <link rel="icon" href="assets/seal.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#reading-table">直接进入牌桌</a>
+
+    <div class="ambient ambient-left" aria-hidden="true"></div>
+    <div class="ambient ambient-right" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Mysterium 首页">
+        <span class="brand-seal" aria-hidden="true">✦</span>
+        <span>
+          <strong>MYSTERIUM</strong>
+          <small>古典马赛塔罗习作</small>
+        </span>
+      </a>
+
+      <button class="text-button" id="open-notes" type="button">
+        <span aria-hidden="true">◎</span>
+        史料与方法
+      </button>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span></span> Prototype · Major Arcana</p>
+          <h1 id="hero-title">把问题放在桌上，<br /><em>让图像参与思考。</em></h1>
+          <p class="hero-lede">
+            三张牌，分别照见来处、当下与趋向。采用约 1701 年的
+            Jean Dodal 马赛牌图像；不虚构“远古秘术”，只保留有出处的传统。
+          </p>
+        </div>
+
+        <div class="hero-mark" aria-hidden="true">
+          <div class="orbit orbit-one"></div>
+          <div class="orbit orbit-two"></div>
+          <span>☉</span>
+          <small>22</small>
+        </div>
+      </section>
+
+      <section class="reading-shell" id="reading-table" aria-labelledby="table-title">
+        <div class="table-head">
+          <div>
+            <p class="section-kicker">THE THREE-CARD TABLE</p>
+            <h2 id="table-title">三张牌桌</h2>
+          </div>
+          <ol class="steps" aria-label="占牌步骤">
+            <li class="is-active" data-step="1"><span>1</span>凝神</li>
+            <li data-step="2"><span>2</span>洗切</li>
+            <li data-step="3"><span>3</span>取牌</li>
+            <li data-step="4"><span>4</span>释读</li>
+          </ol>
+        </div>
+
+        <div class="controls-grid">
+          <div class="question-block">
+            <label for="question">你希望从哪个问题开始？</label>
+            <div class="input-wrap">
+              <textarea
+                id="question"
+                maxlength="120"
+                rows="2"
+                placeholder="例如：我该如何看待眼前这次选择？"
+              ></textarea>
+              <span id="question-count" aria-live="polite">0 / 120</span>
+            </div>
+            <div class="prompt-chips" aria-label="问题方向">
+              <button type="button" data-prompt="我该如何理解目前这段关系？">关系</button>
+              <button type="button" data-prompt="我在当前事业阶段最需要看见什么？">事业</button>
+              <button type="button" data-prompt="面对眼前的选择，我忽略了什么？">选择</button>
+              <button type="button" data-prompt="此刻的我最需要整合什么？">自我</button>
+            </div>
+          </div>
+
+          <aside class="method-card" aria-label="本次牌法设置">
+            <div class="method-row">
+              <span class="method-icon" aria-hidden="true">ⅩⅩⅡ</span>
+              <div>
+                <small>牌组</small>
+                <strong>Jean Dodal · 22 张王牌</strong>
+              </div>
+            </div>
+            <div class="method-row">
+              <span class="method-icon" aria-hidden="true">ⅠⅡⅢ</span>
+              <div>
+                <small>牌位</small>
+                <strong>来处 · 当下 · 趋向</strong>
+              </div>
+            </div>
+            <label class="toggle-row">
+              <span>
+                <small>正逆位</small>
+                <strong>纳入图像方向</strong>
+              </span>
+              <input id="reversals" type="checkbox" checked />
+              <span class="toggle" aria-hidden="true"></span>
+            </label>
+            <p class="micro-note">逆位有 18 世纪文献先例；关闭也不影响牌法完整性。</p>
+          </aside>
+        </div>
+
+        <div class="ritual-bar">
+          <div class="deck-mini" id="deck-mini" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="ritual-status">
+            <small>当前状态</small>
+            <strong id="status-text" aria-live="polite">写下问题，或保留空白作一次开放观察</strong>
+            <span id="shuffle-receipt">使用浏览器加密随机数，抽取不预设结果</span>
+          </div>
+          <button class="primary-button" id="shuffle-button" type="button">
+            <span>洗牌并切牌</span>
+            <b aria-hidden="true">→</b>
+          </button>
+        </div>
+
+        <div class="draw-heading">
+          <div>
+            <span class="hairline"></span>
+            <p id="draw-instruction">洗牌后，依次翻开三张牌</p>
+            <span class="hairline"></span>
+          </div>
+          <small>点击牌背翻牌</small>
+        </div>
+
+        <div class="card-grid" id="card-grid" aria-label="三张牌位"></div>
+
+        <section class="reading-result" id="reading-result" aria-labelledby="result-title" hidden>
+          <div class="result-heading">
+            <div>
+              <p class="section-kicker">YOUR READING</p>
+              <h2 id="result-title">把三张牌连成一句话</h2>
+            </div>
+            <button class="secondary-button" id="copy-reading" type="button">复制释读</button>
+          </div>
+          <blockquote id="question-echo"></blockquote>
+          <div class="interpretations" id="interpretations"></div>
+          <div class="synthesis">
+            <div class="synthesis-mark" aria-hidden="true">✦</div>
+            <div>
+              <small>综合线索</small>
+              <p id="synthesis-text"></p>
+              <strong id="action-text"></strong>
+            </div>
+          </div>
+          <div class="result-actions">
+            <p>塔罗适合帮助整理感受，不替代医疗、法律、财务或人生重大决定的专业意见。</p>
+            <button class="text-button reset-button" id="reset-button" type="button">重新起牌 ↺</button>
+          </div>
+        </section>
+      </section>
+
+      <section class="provenance" aria-labelledby="provenance-title">
+        <div>
+          <p class="section-kicker">HISTORICAL NOTE</p>
+          <h2 id="provenance-title">“古老”不等于编造得神秘</h2>
+        </div>
+        <div class="provenance-copy">
+          <p>
+            现存史料把塔罗的早期形态指向 15 世纪北意大利的纸牌游戏；它与占卜的系统关联，
+            是更晚才被记录下来的。这个 Demo 因而区分<strong>历史牌面</strong>与<strong>现代三张牌框架</strong>。
+          </p>
+          <button class="inline-link" id="open-notes-secondary" type="button">查看采用的来源与边界 →</button>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>MYSTERIUM · DEMO 0.1</span>
+      <span>牌面：Jean Dodal 马赛塔罗 · CC0</span>
+      <span>为清醒的自我观察而作</span>
+    </footer>
+
+    <dialog id="notes-dialog">
+      <div class="dialog-head">
+        <div>
+          <p class="section-kicker">SOURCES &amp; METHOD</p>
+          <h2>史料与方法说明</h2>
+        </div>
+        <button id="close-notes" type="button" aria-label="关闭史料说明">×</button>
+      </div>
+      <div class="dialog-body">
+        <section>
+          <span class="note-number">01</span>
+          <div>
+            <h3>牌面传统</h3>
+            <p>
+              Demo 使用 Jean Dodal 的马赛体系大阿卡那图像，原牌约制作于 1701 年。
+              图像整理版由 OpenGameArt 以 CC0 提供。马赛体系保留了杯、剑、杖、币与 22 张王牌的欧洲传统结构。
+            </p>
+            <a href="https://opengameart.org/content/tarot-cards-major-arcana" target="_blank" rel="noreferrer">查看牌面来源</a>
+          </div>
+        </section>
+        <section>
+          <span class="note-number">02</span>
+          <div>
+            <h3>占卜史的边界</h3>
+            <p>
+              大都会艺术博物馆将最早的塔罗记录定位于 15 世纪，并说明它起初是游戏。
+              法国国家图书馆藏有 Etteilla 于 1783–1784 年出版的塔罗占卜著作；这才是可核查的早期系统文献之一。
+            </p>
+            <div class="source-links">
+              <a href="https://www.metmuseum.org/perspectives/tarot-2" target="_blank" rel="noreferrer">Met 塔罗史</a>
+              <a href="https://catalogue.bnf.fr/ark:/12148/cb44214742d" target="_blank" rel="noreferrer">BnF · Etteilla 原著书目</a>
+            </div>
+          </div>
+        </section>
+        <section>
+          <span class="note-number">03</span>
+          <div>
+            <h3>本 Demo 的三张牌法</h3>
+            <p>
+              “来处／当下／趋向”是便于入门的现代阅读框架，不是中世纪定式。这里把“未来”写成“趋向”，
+              因为第三张牌反映的是在当前条件延续时值得观察的方向，并非不可改变的预言。
+            </p>
+          </div>
+        </section>
+        <section>
+          <span class="note-number">04</span>
+          <div>
+            <h3>随机与逆位</h3>
+            <p>
+              每次洗牌使用 <code>crypto.getRandomValues()</code> 完成 Fisher–Yates 洗牌，再随机切牌。
+              开启逆位后，每张牌以等概率决定方向。逆位是解释图像阻滞、内化或过度的一种视角，不等同于“坏牌”。
+            </p>
+          </div>
+        </section>
+      </div>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
