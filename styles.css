@@ -1157,6 +1157,12 @@ textarea::placeholder {
   line-height: 2;
 }
 
+.provenance h2 {
+  font-size: clamp(15px, 1.6vw, 22px);
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
 .provenance-copy strong {
   color: var(--paper);
   font-weight: 500;
