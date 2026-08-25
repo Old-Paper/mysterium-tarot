@@ -28,14 +28,16 @@ git push
 
 ## 当前范围
 
-- 完整 78 张历史马赛体系牌组：22 张 Jean Dodal 主牌与 56 张 BnF 馆藏 Conver 系小牌
+- 完整 78 张马赛体系组合牌库：22 张 Jean Dodal 主牌与 56 张 BnF 馆藏 Conver 系小牌；明确说明两部分并非同一副历史牌
 - 小牌保留钱币、圣杯、宝剑、权杖四组各 14 张的传统点数牌结构
 - 单张、三张、五张十字、七张马蹄、二选一、凯尔特十字、十二宫与四十二张综合牌阵
 - 十二宫可选第 13 张主题牌
 - 可实际抽取的 42 张 Waite 全景法：六叠七张、重叠为七叠六张、分组重洗并排成六行七张
 - 默认默念问题模式，以及可切换的文字输入模式
-- 浏览器加密随机数 + Fisher–Yates 洗牌 + 随机切牌
-- 可选正逆位
+- 浏览器加密随机数 + 拒绝采样 + Fisher–Yates 洗牌 + 随机切牌
+- 抽牌前后张数与唯一性校验
+- 可选正逆位；方向在完整牌库洗牌前决定
+- 42 张法可选魔术师或女教皇人物牌，并按原法处理抽离与补位
 - 按所选牌阵动态生成牌位、逐张翻牌、位置释读与综合线索
 - 复制释读，以及包含问题、牌阵、全部牌位与解读边界的 AI 提示词
 - 响应式与键盘可访问界面
@@ -46,8 +48,9 @@ git push
 - 1783–1784 年 Etteilla 的著作属于可核查的早期塔罗占卜系统文献。
 - 除明确列出文献来源的牌法外，现代牌阵没有唯一标准版本；本站在抽牌前固定并展示每个牌位的定义。
 - 凯尔特十字十个主体位置与 42 张全景法参考 A. E. Waite 1911 年公开文本；原凯尔特法另有人物牌。
-- 42 张法使用完整 78 张牌与 42 张不重复牌；本站实现六行七张核心步骤，但不自动执行原文按性别指定人物牌的做法。
+- 42 张法使用完整 78 张牌与 42 张不重复牌；本站实现六行七张、人物牌抽离与随机补位步骤，但人物牌由用户自主选择，不按原文的性别规则自动指定。
 - 牌义是基于图像与当代反思用途的中文整理，不冒充 Etteilla 原文直译。
+- 程序可提高随机公平性、方法一致性与记录可核验性，但不宣称塔罗具有可保证的预测准确率。
 
 ## 牌面与资料来源
 
@@ -58,6 +61,7 @@ git push
 - [Bibliothèque nationale de France · Etteilla, 1783–1784](https://catalogue.bnf.fr/ark:/12148/cb44214742d)
 - [A. E. Waite · The Pictorial Key to the Tarot, Part III](https://en.wikisource.org/wiki/The_Pictorial_Key_to_the_Tarot/Part_3)
 - [Astrological System for Reading Tarot · Twelve Houses](https://www.daneel.franken.de/tarot/ATA/courses/astrological/ast.pdf)
+- [W3C · Web Cryptography API](https://www.w3.org/TR/webcrypto/#Crypto-method-getRandomValues)
 
 ## 下一阶段建议
 

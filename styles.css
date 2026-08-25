@@ -982,7 +982,8 @@ textarea::placeholder {
 }
 
 .method-row,
-.toggle-row {
+.toggle-row,
+.select-row {
   display: flex;
   gap: 13px;
   align-items: center;
@@ -990,7 +991,8 @@ textarea::placeholder {
 }
 
 .method-row + .method-row,
-.toggle-row {
+.toggle-row,
+.select-row {
   border-top: 1px solid var(--line-soft);
 }
 
@@ -1006,12 +1008,15 @@ textarea::placeholder {
 .method-row small,
 .method-row strong,
 .toggle-row small,
-.toggle-row strong {
+.toggle-row strong,
+.select-row small,
+.select-row strong {
   display: block;
 }
 
 .method-row small,
-.toggle-row small {
+.toggle-row small,
+.select-row small {
   margin-bottom: 2px;
   color: var(--dim);
   font-size: 9px;
@@ -1019,7 +1024,8 @@ textarea::placeholder {
 }
 
 .method-row strong,
-.toggle-row strong {
+.toggle-row strong,
+.select-row strong {
   color: var(--paper);
   font-size: 11px;
   font-weight: 500;
@@ -1074,7 +1080,31 @@ textarea::placeholder {
   outline-offset: 3px;
 }
 
-.theme-toggle-row[hidden] {
+.select-row {
+  justify-content: space-between;
+}
+
+.select-row select {
+  max-width: 92px;
+  padding: 7px 24px 7px 9px;
+  color: var(--paper);
+  font: 10px/1.2 var(--serif-cn);
+  background: #0d0c0a;
+  border: 1px solid #4d463a;
+  border-radius: 2px;
+}
+
+.select-row select:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 2px;
+}
+
+.select-row select:disabled {
+  opacity: 0.55;
+}
+
+.theme-toggle-row[hidden],
+.significator-row[hidden] {
   display: none;
 }
 
@@ -2173,7 +2203,8 @@ code {
   }
 
   .method-row + .method-row,
-  .toggle-row {
+  .toggle-row,
+  .select-row {
     border-top: 0;
   }
 
@@ -2300,7 +2331,8 @@ code {
   }
 
   .method-row + .method-row,
-  .toggle-row {
+  .toggle-row,
+  .select-row {
     border-top: 1px solid var(--line-soft);
   }
 
@@ -2425,6 +2457,10 @@ code {
 @media (min-width: 701px) {
   body {
     zoom: 1.5;
+  }
+
+  dialog {
+    max-height: calc(66.6667vh - 28px);
   }
 
   .hero {

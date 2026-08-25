@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#17140f" />
     <meta
       name="description"
-      content="使用完整 78 张历史马赛体系牌组，支持单张、三张、十字、马蹄、二选一、凯尔特十字、十二宫与四十二张综合牌阵。"
+      content="使用完整 78 张马赛体系组合牌库，支持单张、三张、十字、马蹄、二选一、凯尔特十字、十二宫与四十二张综合牌阵。"
     />
     <title>Mysterium · 古典马赛塔罗 Demo</title>
     <link rel="icon" href="assets/seal.svg" type="image/svg+xml" />
@@ -141,7 +141,7 @@
               <span class="method-icon" aria-hidden="true">78</span>
               <div>
                 <small>牌组</small>
-                <strong>历史马赛体系 · 完整 78 张</strong>
+                <strong>马赛体系组合牌库 · 完整 78 张</strong>
               </div>
             </div>
             <div class="method-row">
@@ -174,7 +174,18 @@
               <input id="theme-card" type="checkbox" />
               <span class="toggle" aria-hidden="true"></span>
             </label>
-            <p class="micro-note">逆位有 18 世纪文献先例；关闭也不影响牌法完整性。</p>
+            <label class="select-row significator-row" id="significator-row" hidden>
+              <span>
+                <small>历史人物牌</small>
+                <strong>置于 42 张牌阵之外</strong>
+              </span>
+              <select id="significator" aria-label="选择 42 张法历史人物牌">
+                <option value="">不使用</option>
+                <option value="1">魔术师</option>
+                <option value="2">女教皇</option>
+              </select>
+            </label>
+            <p class="micro-note" id="method-note">逆位有 18 世纪文献先例；关闭也不影响牌法完整性。</p>
           </aside>
         </div>
 
@@ -228,10 +239,10 @@
               <p class="section-kicker">CONTINUE WITH AI</p>
               <h3 id="ai-prompt-title">复制完整牌阵，继续向 AI 提问</h3>
               <p>
-                <span id="ai-prompt-description">提示词会整理问题、牌阵定义、全部牌位与正逆位，并要求 AI 区分传统象征、组合推论与现实事实。</span>
+                <span id="ai-prompt-description">提示词会整理问题、牌阵定义、不重复抽牌核验与正逆位，并要求 AI 用牌号标注依据、区分给定牌义、组合推论与现实未知。</span>
               </p>
               <div class="ai-prompt-includes" aria-label="提示词包含的内容">
-                <span>问题</span><span>牌阵</span><span>牌位</span><span>正逆位</span><span>解读边界</span>
+                <span>问题</span><span>牌阵</span><span>牌位</span><span>抽牌核验</span><span>证据边界</span>
               </div>
               <p class="ai-prompt-note" id="ai-prompt-note"></p>
             </div>
@@ -262,7 +273,7 @@
     </main>
 
     <footer>
-      <span>MYSTERIUM · DEMO 0.4</span>
+      <span>MYSTERIUM · DEMO 0.5</span>
       <span>牌面：Dodal 主牌＋BnF 历史马赛小牌</span>
       <span>为清醒的自我观察而作</span>
     </footer>
@@ -281,7 +292,7 @@
           <div>
             <h3>牌面传统</h3>
             <p>
-              完整牌库共 78 张：22 张主牌继续使用约 1701 年的 Jean Dodal 马赛图像；新增 56 张小牌取自法国国家图书馆所藏、依 Nicolas Conver 模式制作的历史马赛牌扫描。
+              本站的 78 张组合牌库由两套史料拼合：22 张主牌继续使用约 1701 年的 Jean Dodal 马赛图像；56 张小牌取自法国国家图书馆所藏、依 Nicolas Conver 模式制作的另一套历史马赛牌扫描，两者不冒充同一副古牌。
               小牌保留钱币、圣杯、宝剑、权杖四组各 14 张的传统点数牌结构，不套用后期的叙事插画。
             </p>
             <div class="source-links">
@@ -311,7 +322,7 @@
             <h3>牌阵来源与固定定义</h3>
             <p>
               单张、三张、五张十字、马蹄、二选一与十二宫在现代实践中存在多种位置版本；本站会在抽牌前列明本次采用的固定定义。
-              “凯尔特十字”的十个主体位置及 42 张全景法参考 Waite 1911 年公开文本。本站现已用完整 78 张牌实现 42 张法的六叠、七叠、分组重洗与六行七张布局；原文按性别指定人物牌的步骤不自动执行，并在牌阵说明中明确标注。
+              “凯尔特十字”的十个主体位置及 42 张全景法参考 Waite 1911 年公开文本。本站以完整 78 张牌实现 42 张法的六叠、七叠、分组重洗与六行七张布局，并提供可选的魔术师或女教皇人物牌；人物牌不按性别自动指定，若它原在 42 张中，会从未发的 36 张中随机补位。
             </p>
             <div class="source-links">
               <a href="https://en.wikisource.org/wiki/The_Pictorial_Key_to_the_Tarot/Part_3" target="_blank" rel="noreferrer">Waite · 牌阵原文</a>
@@ -324,8 +335,21 @@
           <div>
             <h3>随机与逆位</h3>
             <p>
-              每次洗牌使用 <code>crypto.getRandomValues()</code> 完成 Fisher–Yates 洗牌，再随机切牌。
-              开启逆位后，每张牌以等概率决定方向。逆位是解释图像阻滞、内化或过度的一种视角，不等同于“坏牌”。
+              每次洗牌使用 <code>crypto.getRandomValues()</code> 获取浏览器加密随机数，以拒绝采样避免范围映射的取模偏差，再完成 Fisher–Yates 洗牌与随机切牌。
+              程序会在洗切和取牌后校验张数与唯一性。开启逆位后，完整 78 张牌会在洗牌前各自等概率决定方向；逆位不等同于“坏牌”。
+            </p>
+            <div class="source-links">
+              <a href="https://www.w3.org/TR/webcrypto/#Crypto-method-getRandomValues" target="_blank" rel="noreferrer">W3C · Web Crypto 随机源</a>
+            </div>
+          </div>
+        </section>
+        <section>
+          <span class="note-number">05</span>
+          <div>
+            <h3>“准确”的可核验边界</h3>
+            <p>
+              本站能核验的是：牌库完整、随机过程无明显程序偏向、牌不重复、牌阵定义在抽牌前固定、历史步骤与现代解释分开标注。
+              这些措施不能证明塔罗具有预测命中率。复制给 AI 的提示词因此要求逐条引用牌号、区分给定牌义与组合推论、提供替代解释，并用现实证据检验结论。
             </p>
           </div>
         </section>
