@@ -553,6 +553,35 @@ const SPREADS = [
     ]
   },
   {
+    id: "waite-celtic-1911",
+    name: "Waite 1911 凯尔特十字原法",
+    english: "WAITE 1911 · §7 CELTIC METHOD",
+    countLabel: "10 张＋1 张代表牌",
+    difficulty: "专业",
+    purpose: "按 Waite 1911 年公开文本回答一个明确问题",
+    bestFor: "问题具体且重要，愿意在抽牌前先选定代表人物或事项的牌，并按十个位置完整阅读。",
+    avoid: "不适合没有明确问题的全景阅读；若不想选择代表牌或只需快速观察，请使用现代凯尔特十字。",
+    howToUse: "先明确问题并复述一遍；选择一张代表人物或事项的牌并确定其面向。代表牌正面置中，不参与抽取；其余 77 张牌连续洗牌并切牌三次。第 1 张覆盖代表牌，第 2 张横跨第 1 张，再依原文顺序放置第 3—10 张。",
+    example: "在十二月底前，我推进这项计划时，主要影响、阻碍与最终趋向是什么？",
+    basis: "Waite 1911 §7 · 数字化复刻",
+    sourceNote: "操作与十个牌位按 A. E. Waite 1911《The Pictorial Key to the Tarot》第三部分第 7 节实现：先选代表牌，余牌洗切三次，第 1 张覆盖、第 2 张横跨。代表牌选择由用户在 78 张中完成；原文的人物牌年龄、性别和外貌分配保留在教程中但不自动套用。本站牌面仍为 Dodal 主牌＋Conver 系小牌，中文牌义为现代整理，并非 Waite–Smith 原牌或原文牌义。第 7 节没有“左手切牌”要求，该要求属于第 8 节的 42 张法。",
+    layout: "waite-original",
+    available: true,
+    actionIndex: 6,
+    positions: [
+      { name: "覆盖 · 当前影响", english: "COVERS", lens: "影响人物或事项的总体气氛" },
+      { name: "横跨 · 阻碍", english: "CROSSES", lens: "与当前局面交叉的障碍；好牌也可能表示好事在此处不能产生好结果" },
+      { name: "冠顶 · 目标", english: "CROWNS", lens: "目标、理想或当前条件下可达到但尚未实现的上限" },
+      { name: "脚下 · 基础", english: "BENEATH", lens: "已经成为现实并支撑局面的基础" },
+      { name: "身后 · 渐远影响", english: "BEHIND", lens: "刚刚过去或正在消退的影响" },
+      { name: "面前 · 近期影响", english: "BEFORE", lens: "正在进入局面并会在近期发挥作用的影响" },
+      { name: "自身", english: "SELF", lens: "人物或事项在当前环境中的位置与态度" },
+      { name: "居所 · 环境", english: "HOUSE", lens: "周围环境及其中影响此事的倾向" },
+      { name: "希望或恐惧", english: "HOPES / FEARS", lens: "希望与恐惧如何参与判断" },
+      { name: "将发生之事 · 终局", english: "WHAT WILL COME", lens: "前九张影响共同带来的最终趋向，必须综合全阵理解" }
+    ]
+  },
+  {
     id: "zodiac",
     name: "十二宫牌阵",
     english: "TWELVE HOUSES",
@@ -620,6 +649,11 @@ const els = {
   themeRow: document.querySelector("#theme-toggle-row"),
   significator: document.querySelector("#significator"),
   significatorRow: document.querySelector("#significator-row"),
+  waiteSignificator: document.querySelector("#waite-significator"),
+  waiteSignificatorRow: document.querySelector("#waite-significator-row"),
+  waiteFacing: document.querySelector("#waite-facing"),
+  waiteFacingRow: document.querySelector("#waite-facing-row"),
+  waiteOriginalNote: document.querySelector("#waite-original-note"),
   aiDepth: document.querySelector("#ai-depth"),
   aiDepthRow: document.querySelector("#ai-depth-row"),
   methodNote: document.querySelector("#method-note"),
@@ -642,6 +676,7 @@ const els = {
   aiCopyButton: document.querySelector("#copy-ai-prompt"),
   aiPromptDescription: document.querySelector("#ai-prompt-description"),
   aiPromptNote: document.querySelector("#ai-prompt-note"),
+  waiteFollowUp: document.querySelector("#waite-follow-up"),
   resetButton: document.querySelector("#reset-button"),
   notes: document.querySelector("#notes-dialog"),
   toast: document.querySelector("#toast")
@@ -689,6 +724,9 @@ function captureReadingSession() {
     : [...spread.positions];
   const significatorId = spread.id === "full-forty-two" && ["1", "2"].includes(els.significator.value)
     ? Number(els.significator.value) : null;
+  const waiteSignificatorKey = spread.id === "waite-celtic-1911" ? els.waiteSignificator.value : "";
+  const waiteFacing = spread.id === "waite-celtic-1911" && ["left", "right"].includes(els.waiteFacing.value)
+    ? els.waiteFacing.value : "";
   return deepFreeze({
     version: "MYSTERIUM-READING-1",
     createdAt: new Date().toISOString(),
@@ -696,13 +734,19 @@ function captureReadingSession() {
     positions,
     question: state.questionMode === "write" ? els.question.value.trim() : "",
     questionMode: state.questionMode,
-    reversalsEnabled: Boolean(els.reversals.checked),
+    reversalsEnabled: spread.id === "waite-celtic-1911" ? false : Boolean(els.reversals.checked),
     significatorId,
+    waiteSignificatorKey,
+    waiteFacing,
     aiDepth: spread.id === "full-forty-two" && els.aiDepth.value === "summary" ? "summary" : "detailed"
   });
 }
 
 function questionProfile(spread) {
+  if (spread.id === "waite-celtic-1911") return {
+    guidance: "Waite 第 7 节要求先明确提出一个具体问题，并在开始前复述。先选代表人物或事项的牌；若牌面没有明显朝向，也必须在抽牌前指定它面向左或右。可用：“在×月×日前，我通过××方式推进××事项时，主要影响、阻碍与最终趋向是什么？”",
+    calibration: "这是 Waite 1911 第 7 节用于明确问题的凯尔特十字法。确认问题、代表牌及代表牌面向均已在洗牌前固定；不要把代表牌算作十张抽牌之一。"
+  };
   if (spread.id === "single") return {
     guidance: "选择一个观察焦点即可，例如：“今天我最需要留意什么？”或“面对这件事，我可以先做什么？”每日指引不必强加结果标准；涉及具体事件时再补充背景。",
     calibration: "单张牌只需一个清楚的观察焦点；每日指引无需强求时间范围和结果标准。若是具体事件，仅澄清影响理解的必要背景。"
@@ -729,6 +773,10 @@ function countMark(count) {
 }
 
 function spreadDiagram(spread) {
+  if (spread.id === "waite-celtic-1911") {
+    const cells = Array.from({ length: 10 }, (_, index) => `<span>${index + 1}</span>`).join("");
+    return `<div class="spread-diagram diagram-waite-original" aria-hidden="true"><i>S</i>${cells}</div>`;
+  }
   const count = spread.id === "full-forty-two" ? 42 : spread.positions.length;
   const cells = Array.from({ length: count }, (_, index) => `<span>${index + 1}</span>`).join("");
   return `<div class="spread-diagram diagram-${spread.layout}" aria-hidden="true">${cells}</div>`;
@@ -739,6 +787,17 @@ function spreadPositionGuide(spread) {
     return "六行 × 七张，共 42 张；每行从右向左依次读 1—7 号。这是一套连续全景阅读，不把每张牌预设为独立主题。";
   }
   return spread.positions.map((position, index) => `${index + 1}. ${position.name}：${position.lens}`).join("；");
+}
+
+function populateWaiteSignificators() {
+  const major = CARDS.filter((card) => card.arcana === "major")
+    .map((card) => `<option value="${drawEntryKey(card)}">${card.numeral} · ${card.name}</option>`).join("");
+  const minors = MINOR_SUITS.map((suit) => {
+    const options = CARDS.filter((card) => card.suit === suit.id)
+      .map((card) => `<option value="${drawEntryKey(card)}">${card.numeral} · ${card.name}</option>`).join("");
+    return `<optgroup label="${suit.name}">${options}</optgroup>`;
+  }).join("");
+  els.waiteSignificator.innerHTML = `<option value="">请先选择代表牌</option><optgroup label="大阿卡纳">${major}</optgroup>${minors}`;
 }
 
 function renderSpreadLibrary() {
@@ -784,19 +843,33 @@ function syncSpreadUI() {
     ? `${positions.length === 13 ? "主题牌 · " : ""}十二个生活领域`
     : spread.id === "full-forty-two"
       ? "六行 × 七张 · 每行从右向左"
+      : spread.id === "waite-celtic-1911"
+        ? "代表牌 · 覆盖 · 横跨 · 十个主体位置"
       : positions.map((position) => position.name).join(" · ");
   els.themeRow.hidden = spread.id !== "zodiac";
   els.significatorRow.hidden = spread.id !== "full-forty-two";
+  els.waiteSignificatorRow.hidden = spread.id !== "waite-celtic-1911";
+  els.waiteFacingRow.hidden = spread.id !== "waite-celtic-1911";
+  els.waiteOriginalNote.hidden = spread.id !== "waite-celtic-1911";
   els.aiDepthRow.hidden = spread.id !== "full-forty-two";
+  if (state.phase === "idle") {
+    if (spread.id === "waite-celtic-1911") els.reversals.checked = false;
+    els.reversals.disabled = spread.id === "waite-celtic-1911";
+  }
   els.questionGuidance.textContent = questionProfile(spread).guidance;
   els.question.placeholder = spread.example;
-  els.methodNote.textContent = spread.id === "full-forty-two"
+  els.methodNote.textContent = spread.id === "waite-celtic-1911"
+    ? "Waite 第 7 节明确要求代表牌正面置中，并将其余牌洗切三次；该节没有规定制造逆位的步骤，因此严格模式固定只读正位。数字洗切等价于随机洗切，但不能复制手持纸牌的触感。"
+    : spread.id === "full-forty-two"
     ? "原法使用人物牌；本站允许自主选择或省略。选择后，人物牌置于阵外，其余 77 张有资格进入 42 张牌阵。逆位开启时每张独立 50%，这是现代随机约定。"
     : "逆位开启时，每张牌独立以 50% 概率确定方向，不保证一半牌是逆位；这是本站现代约定，不是统一古法。关闭则本次只读正位。";
   els.instruction.textContent = spread.id === "full-forty-two"
     ? "洗牌后，每次翻开一整行，共六行"
+    : spread.id === "waite-celtic-1911"
+      ? "选择代表牌与面向，余牌洗切三次后依次翻开十张"
     : `洗牌后，依次翻开 ${count} 张牌`;
-  els.grid.className = `card-grid layout-${spread.layout}${count > 3 ? " is-complex" : ""}${count === 13 ? " has-theme-card" : ""}${spread.id === "full-forty-two" ? " is-forty-two" : ""}`;
+  const facingClass = spread.id === "waite-celtic-1911" && els.waiteFacing.value ? ` facing-${els.waiteFacing.value}` : "";
+  els.grid.className = `card-grid layout-${spread.layout}${count > 3 ? " is-complex" : ""}${count === 13 ? " has-theme-card" : ""}${spread.id === "full-forty-two" ? " is-forty-two" : ""}${facingClass}`;
   els.grid.setAttribute("aria-label", `${spread.name}，${count} 个牌位`);
   els.resultTitle.textContent = "基础牌义与牌位导读";
   els.aiPromptDescription.textContent = `提示词会整理问题、${spread.name}的固定定义、${count} 张不重复牌、抽牌核验与正逆位，并要求 AI 用牌号标注依据、区分给定牌义、组合推论与现实未知。`;
@@ -882,9 +955,13 @@ function buildFortyTwoOrder(shuffledDeck) {
 }
 
 function selectedSignificatorCard(session = state.session || captureReadingSession()) {
-  if (session.spread.id !== "full-forty-two" || session.significatorId === null) return null;
-  const id = session.significatorId;
-  return CARDS.find((card) => card.arcana === "major" && card.id === id) || null;
+  if (session.spread.id === "full-forty-two" && session.significatorId !== null) {
+    return CARDS.find((card) => card.arcana === "major" && card.id === session.significatorId) || null;
+  }
+  if (session.spread.id === "waite-celtic-1911" && session.waiteSignificatorKey) {
+    return CARDS.find((card) => drawEntryKey(card) === session.waiteSignificatorKey) || null;
+  }
+  return null;
 }
 
 function applyFortyTwoSignificator(orderedDraws, shuffledDeck, session = state.session || captureReadingSession()) {
@@ -919,19 +996,25 @@ function meaningBasis(card) {
 
 function auditReceipt() {
   if (!state.audit) return "尚未生成抽牌核验记录";
+  const originalCeltic = state.audit.spreadMethod === "waite-celtic-1911";
   const parts = [
     "加密随机源",
     "拒绝采样",
-    "Fisher–Yates 洗牌",
-    `切点 ${state.audit.cutIndex} / ${state.audit.deckSize}`,
+    originalCeltic ? "三轮 Fisher–Yates 洗牌" : "Fisher–Yates 洗牌",
+    originalCeltic
+      ? `三次切点 ${state.audit.cutIndices.join(" / ")}（牌库 77 张）`
+      : `切点 ${state.audit.cutIndex} / ${state.audit.deckSize}`,
     `${state.audit.drawCount} 张不重复`,
     state.audit.reversalsEnabled ? `逆位 ${state.audit.reversedCount} 张` : "仅正位"
   ];
   if (state.audit.spreadMethod === "waite-42") parts.splice(5, 0, "42 法分组重排");
+  if (originalCeltic) parts.splice(5, 0, "代表牌置中 · 覆盖与横跨");
   if (state.audit.significator) {
-    parts.push(state.audit.significatorReplaced
-      ? `人物牌 ${state.audit.significator} 已抽离并补位`
-      : `人物牌 ${state.audit.significator} 位于未发牌`);
+    parts.push(originalCeltic
+      ? `代表牌 ${state.audit.significator}（面向${state.audit.significatorFacing === "left" ? "左" : "右"}）置于阵中但不参与抽取`
+      : state.audit.significatorReplaced
+        ? `人物牌 ${state.audit.significator} 已抽离并补位`
+        : `人物牌 ${state.audit.significator} 位于未发牌`);
     parts.push(`可入阵牌库 ${state.audit.eligibleDeckSize} 张`);
   }
   return parts.join(" · ");
@@ -951,6 +1034,14 @@ function activeQuestion() {
 }
 
 function syncIdleCopy() {
+  if (state.spreadId === "waite-celtic-1911") {
+    els.statusText.textContent = "先明确问题、选择代表牌与面向，再开始三次洗切";
+    els.receipt.textContent = state.questionMode === "meditation"
+      ? "按原文在开始前明确问题并复述；默念内容不会被记录"
+      : "按原文在开始前明确问题并复述；输入仅在当前页面使用";
+    els.shuffleButton.querySelector("span").textContent = "设置完成，开始三次洗切";
+    return;
+  }
   if (state.questionMode === "meditation") {
     els.statusText.textContent = "请静心默念你的问题，准备好后开始抽牌";
     els.receipt.textContent = "问题只留在心中，不会被记录";
@@ -981,6 +1072,8 @@ function setQuestionControlsDisabled(disabled) {
   els.question.disabled = disabled;
   els.themeCard.disabled = disabled;
   els.significator.disabled = disabled;
+  els.waiteSignificator.disabled = disabled;
+  els.waiteFacing.disabled = disabled;
   els.aiDepth.disabled = disabled;
   els.modeButtons.forEach((button) => { button.disabled = disabled; });
   els.spreadGrid.querySelectorAll("button").forEach((button) => { button.disabled = disabled; });
@@ -1007,8 +1100,31 @@ function initialCardMarkup(position, index) {
     </article>`;
 }
 
+function waiteSignificatorMarkup(card) {
+  if (!card) {
+    return `<div class="waite-significator-display is-empty"><span>S</span><strong>先选择代表牌</strong></div>`;
+  }
+  return `<div class="waite-significator-display" aria-label="代表牌：${card.name}，正面置中">
+    <small>S · 代表牌</small>
+    <img src="assets/cards/${card.file}" alt="${card.name}，代表牌正面置中" />
+    <strong>${card.numeral} · ${card.name}</strong>
+  </div>`;
+}
+
 function renderEmptyTable() {
-  els.grid.innerHTML = activePositions().map(initialCardMarkup).join("");
+  const positions = activePositions();
+  if (activeSpread().id !== "waite-celtic-1911") {
+    els.grid.innerHTML = positions.map(initialCardMarkup).join("");
+    return;
+  }
+  const session = state.session || captureReadingSession();
+  const significator = selectedSignificatorCard(session);
+  const cards = positions.map(initialCardMarkup);
+  els.grid.innerHTML = `<div class="waite-center-stack">
+    ${waiteSignificatorMarkup(significator)}
+    ${cards[0]}${cards[1]}
+    <p class="waite-center-caption">S 代表牌置中 · 牌 1 覆盖 · 牌 2 横跨</p>
+  </div>${cards.slice(2).join("")}`;
 }
 
 function assertCompleteDeck(cards) {
@@ -1023,35 +1139,53 @@ function prepareDraws(session = captureReadingSession()) {
   const spread = session.spread;
   const useReversals = session.reversalsEnabled;
   assertCompleteDeck(CARDS);
-  const orientedDeck = CARDS.map((card) => ({
+  const originalCeltic = spread.id === "waite-celtic-1911";
+  const significator = selectedSignificatorCard(session);
+  if (originalCeltic && (!significator || !["left", "right"].includes(session.waiteFacing))) {
+    throw new Error("Waite 1911 原法必须在洗牌前固定代表牌与面向");
+  }
+  const eligibleCards = originalCeltic
+    ? CARDS.filter((card) => drawEntryKey(card) !== drawEntryKey(significator))
+    : CARDS;
+  const orientedDeck = eligibleCards.map((card) => ({
     card: { ...card },
     reversed: useReversals ? secureRandomInt(2) === 1 : false
   }));
-  const shuffled = shuffleDeck(orientedDeck);
+  const cutIndices = [];
+  let shuffled = orientedDeck;
+  const shuffleRounds = originalCeltic ? 3 : 1;
+  for (let round = 0; round < shuffleRounds; round += 1) {
+    shuffled = shuffleDeck(shuffled);
+    cutIndices.push(state.cutIndex);
+  }
   let orderedDraws = spread.id === "full-forty-two"
     ? buildFortyTwoOrder(shuffled)
     : shuffled.slice(0, session.positions.length);
 
   const significatorResult = spread.id === "full-forty-two"
     ? applyFortyTwoSignificator(orderedDraws, shuffled, session)
-    : { draws: orderedDraws, significator: null, replaced: false };
+    : originalCeltic
+      ? { draws: orderedDraws, significator, replaced: false }
+      : { draws: orderedDraws, significator: null, replaced: false };
   orderedDraws = significatorResult.draws;
   assertUniqueDrawEntries(orderedDraws, session.positions.length, "本次抽牌");
 
   const audit = {
     version: RANDOM_METHOD_VERSION,
     deckSize: CARDS.length,
-    eligibleDeckSize: CARDS.length - (significatorResult.significator ? 1 : 0),
+    eligibleDeckSize: originalCeltic ? 77 : CARDS.length - (significatorResult.significator ? 1 : 0),
     drawCount: orderedDraws.length,
     uniqueCount: new Set(orderedDraws.map(drawEntryKey)).size,
     cutIndex: state.cutIndex,
+    cutIndices,
     reversalsEnabled: useReversals,
     reversedCount: orderedDraws.filter((draw) => draw.reversed).length,
-    spreadMethod: spread.id === "full-forty-two" ? "waite-42" : "top-n",
+    spreadMethod: spread.id === "full-forty-two" ? "waite-42" : originalCeltic ? "waite-celtic-1911" : "top-n",
     significator: significatorResult.significator?.name || null,
     significatorReplaced: significatorResult.replaced,
     significatorPosition: significatorResult.replacedPosition || null,
-    replacement: significatorResult.replacement?.name || null
+    replacement: significatorResult.replacement?.name || null,
+    significatorFacing: originalCeltic ? session.waiteFacing : null
   };
   state.session = deepFreeze({
     ...session,
@@ -1068,6 +1202,7 @@ function prepareDraws(session = captureReadingSession()) {
     const button = position.querySelector(".tarot-card");
     button.disabled = index !== 0;
     button.classList.toggle("can-reveal", index === 0);
+    position.classList.toggle("can-reveal-position", index === 0);
     if (spread.id === "full-forty-two") {
       const isLineStart = index % 7 === 0;
       button.setAttribute("aria-label", isLineStart
@@ -1095,6 +1230,7 @@ function paintCard(index) {
     <span class="orientation-badge">${orientation}</span>`;
   caption.innerHTML = `<strong>${draw.card.numeral} · ${draw.card.name}</strong><span>${draw.card.keyword} · ${orientation}</span>`;
   wrapper.classList.add("is-revealed");
+  wrapper.classList.remove("can-reveal-position");
   button.classList.remove("can-reveal");
   button.classList.add("is-revealed");
   button.blur();
@@ -1110,9 +1246,11 @@ function revealCard(index) {
   state.revealed += 1;
 
   if (state.revealed < positions.length) {
-    const next = document.querySelector(`.card-position[data-index="${state.revealed}"] .tarot-card`);
+    const nextWrapper = document.querySelector(`.card-position[data-index="${state.revealed}"]`);
+    const next = nextWrapper.querySelector(".tarot-card");
     next.disabled = false;
     next.classList.add("can-reveal");
+    nextWrapper.classList.add("can-reveal-position");
     els.statusText.textContent = `已翻开 ${state.revealed} 张，请继续翻开「${positions[state.revealed].name}」`;
     els.instruction.textContent = `继续翻开第 ${state.revealed + 1} 张牌`;
     updateSteps(3);
@@ -1198,8 +1336,11 @@ function buildSynthesisText(spread = activeSpread(), positions = activePositions
     sections.push(`共同条件：${ref(0)}。先定义 A、B，之后全程使用相同的期限与评价标准。`,
       `A 路径：${chain([1, 2, 3])}。`, `B 路径：${chain([4, 5, 6])}。`,
       "成对比较牌 2 与 5 的过程、牌 3 与 6 的代价、牌 4 与 7 的趋向；两条路径都受牌 1 限制，不计算吉凶得分来替你作决定。");
-  } else if (spread.id === "celtic-cross") {
-    sections.push(`核心张力：${ref(0)}与${ref(1)}。第二张必须参与判断：它如何限制、抵消或要求调整第一张的主题？`,
+  } else if (["celtic-cross", "waite-celtic-1911"].includes(spread.id)) {
+    if (spread.id === "waite-celtic-1911") {
+      sections.push(`代表牌：${state.significator.name}（面向${state.audit.significatorFacing === "left" ? "左" : "右"}）在中心正面置放，不计入十张抽牌。`);
+    }
+    sections.push(`核心张力：${ref(0)}覆盖代表牌，${ref(1)}横跨其上。第二张必须参与判断：它如何限制、抵消或要求调整第一张的主题？`,
       `目标与基础：${ref(2)}与${ref(3)}。区分期待达到的状态和目前确有的根基。`,
       `变化过程：${chain([4, 5])}。检视什么正在减弱、什么可能进入局面，并与核心张力核对。`,
       `内外校准：${ref(6)}、${ref(7)}与${ref(8)}。分开自身态度、环境证据、希望和担忧，不把心理状态等同于外界事实。`,
@@ -1291,6 +1432,7 @@ function finishReading() {
   els.aiPromptNote.textContent = question
     ? "复制后请先检查内容，并删除姓名、联系方式等不必要的隐私信息。"
     : "冥想模式不会记录问题；复制后请先把占位符替换为你默念的问题。";
+  els.waiteFollowUp.hidden = spread.id !== "waite-celtic-1911";
   document.body.classList.add("reading-complete");
   els.result.hidden = false;
   els.result.focus({ preventScroll: true });
@@ -1311,6 +1453,16 @@ async function startShuffle() {
     els.question.focus();
     return;
   }
+  if (state.spreadId === "waite-celtic-1911" && !els.waiteSignificator.value) {
+    showToast("请先选择代表人物或事项的牌");
+    els.waiteSignificator.focus();
+    return;
+  }
+  if (state.spreadId === "waite-celtic-1911" && !els.waiteFacing.value) {
+    showToast("请在洗牌前确认代表牌面向");
+    els.waiteFacing.focus();
+    return;
+  }
   const session = captureReadingSession();
   const positions = session.positions;
   const runId = ++state.runId;
@@ -1319,8 +1471,12 @@ async function startShuffle() {
   els.shuffleButton.disabled = true;
   els.shuffleButton.querySelector("span").textContent = "正在洗牌…";
   els.deckMini.classList.add("is-shuffling");
-  els.statusText.textContent = "正在混合完整 78 张马赛体系组合牌库";
-  els.receipt.textContent = "加密随机源 · 拒绝采样 · Fisher–Yates 洗牌进行中";
+  els.statusText.textContent = session.spread.id === "waite-celtic-1911"
+    ? "代表牌已正面置中，正在对其余 77 张牌完成三次洗牌与切牌"
+    : "正在混合完整 78 张马赛体系组合牌库";
+  els.receipt.textContent = session.spread.id === "waite-celtic-1911"
+    ? "Waite 1911 §7 · 第 1／3 轮数字洗切开始"
+    : "加密随机源 · 拒绝采样 · Fisher–Yates 洗牌进行中";
   setQuestionControlsDisabled(true);
   els.reversals.disabled = true;
   document.body.classList.remove("reading-complete");
@@ -1343,6 +1499,7 @@ async function startShuffle() {
     els.shuffleButton.disabled = false;
     setQuestionControlsDisabled(false);
     els.reversals.disabled = false;
+    syncSpreadUI();
     syncIdleCopy();
     renderEmptyTable();
     els.receipt.textContent = "安全随机洗牌未完成，请使用最新版浏览器后重试";
@@ -1356,10 +1513,14 @@ async function startShuffle() {
   els.shuffleButton.querySelector("span").textContent = "洗切完成";
   els.statusText.textContent = activeSpread().id === "full-forty-two"
     ? "42 张已按六叠、七叠与六行步骤重排，请从第一行右侧开始"
+    : activeSpread().id === "waite-celtic-1911"
+      ? "余牌已完成三次洗切；请先翻开覆盖代表牌的第 1 张"
     : `牌已洗切，请翻开「${positions[0].name}」`;
   els.receipt.textContent = auditReceipt();
   els.instruction.textContent = activeSpread().id === "full-forty-two"
     ? "点击第一行右侧第一张牌，整行翻开"
+    : activeSpread().id === "waite-celtic-1911"
+      ? "依次翻开：牌 1 覆盖，牌 2 横跨，再读牌 3—10"
     : `按牌位编号，依次翻开 ${positions.length} 张牌`;
   updateSteps(3);
 }
@@ -1384,6 +1545,7 @@ function resetReading() {
     ? "洗牌后，每次翻开一整行，共六行"
     : `洗牌后，依次翻开 ${activePositions().length} 张牌`;
   els.result.hidden = true;
+  els.waiteFollowUp.hidden = true;
   renderEmptyTable();
   updateSteps(1);
   document.querySelector("#reading-table").scrollIntoView({ behavior: "smooth", block: "start" });
@@ -1400,7 +1562,9 @@ function buildReadingText() {
   lines.push(`记录版本：${state.session.version}；生成时间：${state.session.createdAt}`);
   lines.push(`方法边界：${spread.sourceNote}`);
   if (state.significator) {
-    lines.push(`历史人物牌：${state.significator.name}（置于 42 张牌阵外，仅代表问卜主体）`);
+    lines.push(spread.id === "waite-celtic-1911"
+      ? `Waite 代表牌：${state.significator.name}（正面置中，面向${state.audit.significatorFacing === "left" ? "左" : "右"}，不计入十张抽牌）`
+      : `历史人物牌：${state.significator.name}（置于 42 张牌阵外，仅代表问卜主体）`);
   }
   state.draws.forEach((draw, index) => {
     const orientation = draw.reversed ? "逆位" : "正位";
@@ -1410,6 +1574,19 @@ function buildReadingText() {
   lines.push(`\n牌阵关系导读：${buildSynthesisText(spread, positions)}`);
   lines.push(`\n${buildActionText()}`);
   return lines.join("\n");
+}
+
+function restartWaiteWithFinalSignificator() {
+  if (state.phase !== "complete" || activeSpread().id !== "waite-celtic-1911") return;
+  const finalCardKey = drawEntryKey(state.draws[9]);
+  const finalCardName = state.draws[9].card.name;
+  resetReading();
+  els.waiteSignificator.value = finalCardKey;
+  els.waiteFacing.value = "";
+  syncSpreadUI();
+  renderEmptyTable();
+  showToast(`已将“${finalCardName}”设为新代表牌，请先确认面向`);
+  els.waiteFacing.focus();
 }
 
 function escapePromptRecord(value) {
@@ -1432,6 +1609,8 @@ function buildAiPrompt() {
       ? "按同一现实标准比较 A、B 两条完整路径的过程、代价与趋向，不用单张牌宣布哪个选项绝对正确。"
       : spread.id === "zodiac"
         ? "逐宫解释对应生活领域，再总结跨宫位重复的主题；不要把不同领域压成一个笼统吉凶。"
+        : spread.id === "waite-celtic-1911"
+          ? "按 Waite 第 7 节关系解读：牌 1 覆盖代表牌，牌 2 横跨牌 1；牌 5 是代表牌身后的渐远影响，牌 6 是其面前的近期影响；牌 10 必须综合代表牌和前九张，不得孤立判决。"
         : spread.id === "full-forty-two"
           ? `先扫全局，再按六行、每行从右向左阅读。${isDetailed ? "逐牌详读模式：必须覆盖全部 42 张，每张结合相邻牌说明其在连续脉络中的作用；使用全局牌号 1—42，不能只选关键牌。" : "六行概览模式：检查全部 42 张后，每行给出摘要，再解释关键牌与跨行关系；这是压缩概览，不冒充完整逐牌详读。"}总结大牌、花色与数字分布时必须引用牌号，不要把数量分布包装成统计学预测。`
           : `按编号与牌位把全部 ${positions.length} 张牌读成一个结构，说明相互呼应、张力和可能的转折条件。`;
@@ -1439,9 +1618,13 @@ function buildAiPrompt() {
     ? "六行七张；先上后下，每行从右向左。全局牌号 1—7 为第一行、8—14 为第二行、15—21 为第三行、22—28 为第四行、29—35 为第五行、36—42 为第六行；行内 1—7 号仅表示本行位置，引用依据始终使用全局牌号 1—42。六行不预设独立主题或固定时间。"
     : positions.map((position, index) => `${index + 1}.${position.name}＝${position.lens}`).join("；");
   const significatorMethod = state.significator
-    ? `人物牌为${state.significator.name}，置于牌阵外；${state.audit.significatorReplaced ? `它原在第 ${state.audit.significatorPosition} 个位置，已依原法从未发的 36 张中随机抽取${state.audit.replacement}补位` : "它原在未发的 36 张中，因此 42 张牌位无需补位"}。`
+    ? spread.id === "waite-celtic-1911"
+      ? `代表牌为${state.significator.name}，在洗牌前正面置于中心并从牌库移除，面向${state.audit.significatorFacing === "left" ? "左" : "右"}；余下 77 张参与三次洗切，代表牌不计入十张抽牌。`
+      : `人物牌为${state.significator.name}，置于牌阵外；${state.audit.significatorReplaced ? `它原在第 ${state.audit.significatorPosition} 个位置，已依原法从未发的 36 张中随机抽取${state.audit.replacement}补位` : "它原在未发的 36 张中，因此 42 张牌位无需补位"}。`
     : "本次不使用历史人物牌。";
-  const drawMethod = spread.id === "full-forty-two"
+  const drawMethod = spread.id === "waite-celtic-1911"
+    ? `${session.audit.version}：${significatorMethod}使用浏览器加密随机源、拒绝采样，连续完成三轮 Fisher–Yates 洗牌及随机切牌，切点依次为 ${session.audit.cutIndices.join("、")}（每轮均针对 77 张）；依次取十张，牌 1 覆盖代表牌、牌 2 横跨牌 1，再放置牌 3—10；第 7 节没有规定制造逆位的步骤，本严格模式仅使用正位；最终核验十张全部唯一且不含代表牌。数字操作复刻顺序与随机结果，不宣称复制手持纸牌的物理动作。`
+    : spread.id === "full-forty-two"
     ? `${session.audit.version}：浏览器加密随机源、拒绝采样、Fisher–Yates 洗牌、随机切点 ${session.audit.cutIndex} / 78；先取 42 张为六叠七张，再重叠为七叠六张，依次将 7、14、21 张分别重洗并排成六行七张；${significatorMethod}${session.reversalsEnabled ? "方向在整副牌洗牌前独立等概率决定（每张逆位概率 50%，现代约定，不保证本次正逆位各半）" : "仅使用正位"}；最终核验 42 张全部唯一，可进入牌阵的有效牌库为 ${session.audit.eligibleDeckSize} 张。`
     : `${session.audit.version}：浏览器加密随机源、拒绝采样、Fisher–Yates 洗牌、随机切点 ${session.audit.cutIndex} / 78；${session.reversalsEnabled ? "方向在整副牌洗牌前独立等概率决定（每张逆位概率 50%，现代约定，不保证本次正逆位各半）" : "仅使用正位"}；最终核验 ${positions.length} 张全部唯一，可进入牌阵的有效牌库为 ${session.audit.eligibleDeckSize} 张。`;
   const answerStructure = spread.id === "full-forty-two"
@@ -1456,10 +1639,13 @@ function buildAiPrompt() {
     "<方法与边界>",
     "- 牌组：完整 78 张马赛体系组合牌库；22 张主牌采用 Jean Dodal 图像，56 张小牌采用法国国家图书馆所藏 Conver 系历史牌面。两部分来自不同历史牌组，不能冒充同一副古牌。",
     `- 牌阵：${spread.name}，本次使用 ${positions.length} 张牌。`,
+    ...(spread.id === "waite-celtic-1911" ? [`- 代表牌：${state.significator.name}，正面置中并从抽牌牌库移除，面向${state.audit.significatorFacing === "left" ? "左" : "右"}；它不计入十张抽牌。`] : []),
     `- 来源边界：${spread.sourceNote}`,
     `- 固定结构：${positionDefinition}`,
     "- 证据层级：历史牌面与有出处的发牌步骤属于方法资料；本站中文正逆位牌义属于现代反思性综合；牌与牌之间的关系属于本次组合推论；用户未提供的现实情况一律未知。",
-    "- 正逆位的具体中文解释和独立 50% 方向模型是本站采用的现代选项，不是统一古法。逆位可表示阻滞、内化、失衡或需要校准，不要机械地当成正位反义词。",
+    spread.id === "waite-celtic-1911"
+      ? "- Waite 第 7 节没有规定怎样在这一步制造逆位，因此本严格模式固定只读正位；不要自行补造逆位。"
+      : "- 正逆位的具体中文解释和独立 50% 方向模型是本站采用的现代选项，不是统一古法。逆位可表示阻滞、内化、失衡或需要校准，不要机械地当成正位反义词。",
     "- 塔罗用于象征性反思，不是事实侦测或确定性预测；不得声称知道他人的想法、隐藏事实或注定的未来。",
     "- 随机公平性只能保证程序没有偏向某张牌，不能证明塔罗具有预测准确率。不得给出成功概率、命中率或伪精确百分比。",
     "</方法与边界>",
@@ -1556,6 +1742,7 @@ function openNotes() {
   else els.notes.setAttribute("open", "");
 }
 
+populateWaiteSignificators();
 syncSpreadUI();
 renderEmptyTable();
 
@@ -1578,10 +1765,20 @@ els.themeCard.addEventListener("change", () => {
   renderEmptyTable();
 });
 
+[els.waiteSignificator, els.waiteFacing].forEach((control) => {
+  control.addEventListener("change", () => {
+    if (state.phase !== "idle" || state.spreadId !== "waite-celtic-1911") return;
+    syncSpreadUI();
+    renderEmptyTable();
+    syncIdleCopy();
+  });
+});
+
 els.shuffleButton.addEventListener("click", startShuffle);
 els.resetButton.addEventListener("click", resetReading);
 els.copyButton.addEventListener("click", copyReading);
 els.aiCopyButton.addEventListener("click", copyAiPrompt);
+els.waiteFollowUp.addEventListener("click", restartWaiteWithFinalSignificator);
 document.querySelector("#open-notes").addEventListener("click", openNotes);
 document.querySelector("#open-notes-secondary").addEventListener("click", openNotes);
 document.querySelector("#close-notes").addEventListener("click", () => els.notes.close());

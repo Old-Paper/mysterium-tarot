@@ -6,12 +6,12 @@
     <meta name="theme-color" content="#17140f" />
     <meta
       name="description"
-      content="使用完整 78 张马赛体系组合牌库，支持单张、三张、十字、马蹄、二选一、凯尔特十字、十二宫与四十二张综合牌阵。"
+      content="使用完整 78 张马赛体系组合牌库，支持单张、三张、十字、马蹄、二选一、现代凯尔特十字、Waite 1911 凯尔特十字原法、十二宫与四十二张综合牌阵。"
     />
     <title>Mysterium · 古典马赛塔罗 Demo</title>
     <link rel="icon" href="assets/seal.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=20260909-methods" />
-    <script src="app.js?v=20260909-methods" defer></script>
+    <link rel="stylesheet" href="styles.css?v=20260909-waite1911" />
+    <script src="app.js?v=20260909-waite1911" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#reading-table">直接进入牌桌</a>
@@ -186,6 +186,32 @@
                 <option value="2">女教皇</option>
               </select>
             </label>
+            <label class="select-row waite-significator-row" id="waite-significator-row" hidden>
+              <span>
+                <small>Waite 代表牌</small>
+                <strong>先选人物或事项，再洗切余牌</strong>
+              </span>
+              <select id="waite-significator" aria-label="选择 Waite 1911 凯尔特十字代表牌" required>
+                <option value="">请先选择代表牌</option>
+              </select>
+            </label>
+            <label class="select-row waite-facing-row" id="waite-facing-row" hidden>
+              <span>
+                <small>代表牌面向</small>
+                <strong>决定身后与面前的位置</strong>
+              </span>
+              <select id="waite-facing" aria-label="选择代表牌面向" required>
+                <option value="">请先确认朝向</option>
+                <option value="left">面向左</option>
+                <option value="right">面向右</option>
+              </select>
+            </label>
+            <details class="waite-original-note" id="waite-original-note" hidden>
+              <summary>怎样按 1911 年原文选择代表牌？</summary>
+              <p><strong>代表人物：</strong>原文建议用宫廷牌，并按年龄、性别、外貌或性情选择：男性四十岁及以上用骑士、以下用国王；女性四十岁以上用王后、以下用侍从。权杖对应很浅的肤发、圣杯对应浅棕或暗金发、宝剑对应深棕发与较暗肤色、钱币对应最深的肤发；原文也允许按已知性情调整。这些是 1911 年的历史分类，本站只如实说明，不自动替用户判断。</p>
+              <p><strong>代表事项：</strong>可选择意义与问题相应的大牌或小牌。原文举例：询问诉讼是否必要时可用正义牌；询问自己能否胜诉时则用代表问卜者的宫廷牌。</p>
+              <p><strong>面向：</strong>牌中人物明显朝左或右时按图像选择；大牌或点数牌无法判断时，原文要求在开始前自行指定。面向决定第 5 张“身后”和第 6 张“面前”的摆放方向。</p>
+            </details>
             <label class="select-row ai-depth-row" id="ai-depth-row" hidden>
               <span>
                 <small>AI 解读详略</small>
@@ -264,6 +290,7 @@
           </section>
           <div class="result-actions">
             <p>塔罗适合帮助整理感受，不替代医疗、法律、财务或人生重大决定的专业意见。</p>
+            <button class="secondary-button waite-follow-up" id="waite-follow-up" type="button" hidden>以第十张为代表牌再起一次</button>
             <button class="text-button reset-button" id="reset-button" type="button">重新起牌 ↺</button>
           </div>
         </section>
@@ -285,7 +312,7 @@
     </main>
 
     <footer>
-      <span>MYSTERIUM · DEMO 0.6</span>
+      <span>MYSTERIUM · DEMO 0.7</span>
       <span>牌面：Dodal 主牌＋BnF 历史马赛小牌</span>
       <span>为清醒的自我观察而作</span>
     </footer>
@@ -334,7 +361,7 @@
             <h3>牌阵来源与固定定义</h3>
             <p>
               单张、三张、五张十字、马蹄、二选一与十二宫在现代实践中存在多种位置版本；本站会在抽牌前列明本次采用的固定定义。
-              “凯尔特十字”的十个主体位置及 42 张全景法参考 Waite 1911 年公开文本。本站凯尔特十字是现代十张简化版：不设原法的代表牌，采用一次洗牌与随机切牌，第二张交叉牌为便于查看而展开陈列；原法要求的三次洗切未被复现。
+              “凯尔特十字”的十个主体位置及 42 张全景法参考 Waite 1911 年公开文本。本站保留易用的现代十张简化版，同时另设“Waite 1911 凯尔特十字原法”：先选代表牌并正面置中，对剩余 77 张连续洗切三次，第 1 张覆盖代表牌，第 2 张横跨第 1 张，再按原文方向放置其余牌。这里的“原法”指第 7 节操作步骤；牌面仍为本站的历史马赛组合牌，中文牌义仍是现代整理。
               本站以完整 78 张牌实现 42 张法的六叠、七叠、分组重洗与六行七张布局。原法使用魔术师或女教皇作人物牌，本站允许省略，也不按性别自动指定；使用时人物牌置于牌阵之外，若它原在 42 张中，会从未发的 36 张中随机补位。
             </p>
             <div class="source-links">
