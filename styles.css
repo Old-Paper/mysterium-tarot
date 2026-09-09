@@ -557,17 +557,17 @@ footer {
 }
 
 .diagram-zodiac span:nth-child(1) { grid-area: 2 / 1; }
-.diagram-zodiac span:nth-child(2) { grid-area: 1 / 1; }
-.diagram-zodiac span:nth-child(3) { grid-area: 1 / 2; }
-.diagram-zodiac span:nth-child(4) { grid-area: 1 / 3; }
-.diagram-zodiac span:nth-child(5) { grid-area: 1 / 4; }
-.diagram-zodiac span:nth-child(6) { grid-area: 2 / 4; }
+.diagram-zodiac span:nth-child(2) { grid-area: 3 / 1; }
+.diagram-zodiac span:nth-child(3) { grid-area: 4 / 1; }
+.diagram-zodiac span:nth-child(4) { grid-area: 4 / 2; }
+.diagram-zodiac span:nth-child(5) { grid-area: 4 / 3; }
+.diagram-zodiac span:nth-child(6) { grid-area: 4 / 4; }
 .diagram-zodiac span:nth-child(7) { grid-area: 3 / 4; }
-.diagram-zodiac span:nth-child(8) { grid-area: 4 / 4; }
-.diagram-zodiac span:nth-child(9) { grid-area: 4 / 3; }
-.diagram-zodiac span:nth-child(10) { grid-area: 4 / 2; }
-.diagram-zodiac span:nth-child(11) { grid-area: 4 / 1; }
-.diagram-zodiac span:nth-child(12) { grid-area: 3 / 1; }
+.diagram-zodiac span:nth-child(8) { grid-area: 2 / 4; }
+.diagram-zodiac span:nth-child(9) { grid-area: 1 / 4; }
+.diagram-zodiac span:nth-child(10) { grid-area: 1 / 3; }
+.diagram-zodiac span:nth-child(11) { grid-area: 1 / 2; }
+.diagram-zodiac span:nth-child(12) { grid-area: 1 / 1; }
 
 .diagram-forty-two {
   grid-template-columns: repeat(7, 8px);
@@ -904,12 +904,11 @@ footer {
 }
 
 .question-tutorial {
-  grid-column: 1 / -1;
   display: grid;
   grid-template-columns: 48px minmax(0, 1fr);
   gap: 15px;
   align-items: start;
-  margin-top: 2px;
+  margin-top: 16px;
   padding-top: 12px;
   border-top: 1px solid var(--line-soft);
 }
@@ -1085,7 +1084,7 @@ textarea::placeholder {
 }
 
 .select-row select {
-  max-width: 92px;
+  max-width: 112px;
   padding: 7px 24px 7px 9px;
   color: var(--paper);
   font: 10px/1.2 var(--serif-cn);
@@ -1104,7 +1103,8 @@ textarea::placeholder {
 }
 
 .theme-toggle-row[hidden],
-.significator-row[hidden] {
+.significator-row[hidden],
+.ai-depth-row[hidden] {
   display: none;
 }
 
@@ -1339,17 +1339,17 @@ textarea::placeholder {
 }
 
 .layout-zodiac .card-position:nth-child(1) { grid-area: 2 / 1; }
-.layout-zodiac .card-position:nth-child(2) { grid-area: 1 / 1; }
-.layout-zodiac .card-position:nth-child(3) { grid-area: 1 / 2; }
-.layout-zodiac .card-position:nth-child(4) { grid-area: 1 / 3; }
-.layout-zodiac .card-position:nth-child(5) { grid-area: 1 / 4; }
-.layout-zodiac .card-position:nth-child(6) { grid-area: 2 / 4; }
+.layout-zodiac .card-position:nth-child(2) { grid-area: 3 / 1; }
+.layout-zodiac .card-position:nth-child(3) { grid-area: 4 / 1; }
+.layout-zodiac .card-position:nth-child(4) { grid-area: 4 / 2; }
+.layout-zodiac .card-position:nth-child(5) { grid-area: 4 / 3; }
+.layout-zodiac .card-position:nth-child(6) { grid-area: 4 / 4; }
 .layout-zodiac .card-position:nth-child(7) { grid-area: 3 / 4; }
-.layout-zodiac .card-position:nth-child(8) { grid-area: 4 / 4; }
-.layout-zodiac .card-position:nth-child(9) { grid-area: 4 / 3; }
-.layout-zodiac .card-position:nth-child(10) { grid-area: 4 / 2; }
-.layout-zodiac .card-position:nth-child(11) { grid-area: 4 / 1; }
-.layout-zodiac .card-position:nth-child(12) { grid-area: 3 / 1; }
+.layout-zodiac .card-position:nth-child(8) { grid-area: 2 / 4; }
+.layout-zodiac .card-position:nth-child(9) { grid-area: 1 / 4; }
+.layout-zodiac .card-position:nth-child(10) { grid-area: 1 / 3; }
+.layout-zodiac .card-position:nth-child(11) { grid-area: 1 / 2; }
+.layout-zodiac .card-position:nth-child(12) { grid-area: 1 / 1; }
 .layout-zodiac .card-position:nth-child(13) { grid-area: 2 / 2 / 4 / 4; align-self: center; }
 
 .card-grid.layout-forty-two {
@@ -1649,6 +1649,13 @@ textarea::placeholder {
   outline: none;
 }
 
+.result-guide-note {
+  margin: 14px 0 0;
+  color: var(--dim);
+  font-size: 10px;
+  line-height: 1.8;
+}
+
 @keyframes result-in {
   from { opacity: 0; transform: translateY(16px); }
 }
@@ -1842,6 +1849,23 @@ textarea::placeholder {
   line-height: 1.85;
 }
 
+.interpretation-card .position-reading,
+.line-card-detail .position-reading {
+  margin-top: 12px;
+  padding-top: 10px;
+  color: var(--paper);
+  border-top: 1px solid var(--line-soft);
+}
+
+.meaning-label {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--gold);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+
 .interpretation-card em {
   display: block;
   margin-top: 13px;
@@ -1889,6 +1913,11 @@ textarea::placeholder {
   color: var(--gold-bright);
   font-size: 11px;
   font-weight: 500;
+}
+
+.synthesis-guide {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
 }
 
 .ai-prompt-panel {
@@ -2212,7 +2241,8 @@ code {
     display: none;
   }
 
-  .interpretations {
+  .interpretations,
+  .interpretations.is-forty-two {
     grid-template-columns: 1fr;
   }
 

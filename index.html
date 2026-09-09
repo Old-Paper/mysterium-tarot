@@ -10,8 +10,8 @@
     />
     <title>Mysterium · 古典马赛塔罗 Demo</title>
     <link rel="icon" href="assets/seal.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css" />
-    <script src="app.js" defer></script>
+    <link rel="stylesheet" href="styles.css?v=20260909-methods" />
+    <script src="app.js?v=20260909-methods" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#reading-table">直接进入牌桌</a>
@@ -116,10 +116,6 @@
                 <strong>把问题安静地放在心里</strong>
                 <p>闭上眼，缓慢呼吸三次，在心中默念你的问题。无需输入，准备好后即可开始抽牌。</p>
               </div>
-              <div class="question-tutorial">
-                <small>提问提示</small>
-                <p>问题要具体、单一，并写清对象、时间与结果标准。可用：“在×月×日前，我能否通过××方式达成××目标？主要阻碍与结果如何？”</p>
-              </div>
             </div>
 
             <div class="question-mode-panel write-panel" id="write-panel" role="tabpanel" aria-labelledby="mode-write" hidden>
@@ -129,10 +125,15 @@
                   id="question"
                   maxlength="120"
                   rows="4"
+                  aria-describedby="question-guidance"
                   placeholder="问题要具体、单一，并写清对象、时间与结果标准。可用：“在×月×日前，我能否通过××方式达成××目标？主要阻碍与结果如何？”"
                 ></textarea>
                 <span id="question-count" aria-live="polite">0 / 120</span>
               </div>
+            </div>
+            <div class="question-tutorial">
+              <small>提问提示</small>
+              <p id="question-guidance">问题要具体、单一，并写清对象、时间与结果标准。可用：“在×月×日前，我能否通过××方式达成××目标？主要阻碍与结果如何？”</p>
             </div>
           </div>
 
@@ -185,7 +186,17 @@
                 <option value="2">女教皇</option>
               </select>
             </label>
-            <p class="micro-note" id="method-note">逆位有 18 世纪文献先例；关闭也不影响牌法完整性。</p>
+            <label class="select-row ai-depth-row" id="ai-depth-row" hidden>
+              <span>
+                <small>AI 解读详略</small>
+                <strong>复制提示词时采用</strong>
+              </span>
+              <select id="ai-depth" aria-label="选择 42 张牌阵 AI 解读详略">
+                <option value="detailed" selected>逐牌详读</option>
+                <option value="summary">六行概览</option>
+              </select>
+            </label>
+            <p class="micro-note" id="method-note">开启逆位时，每张牌独立有 50% 概率逆位；这是本站的现代约定，历史牌法并未统一规定比例。</p>
           </aside>
         </div>
 
@@ -219,17 +230,18 @@
           <div class="result-heading">
             <div>
               <p class="section-kicker">YOUR READING</p>
-              <h2 id="result-title">把三张牌连成一个过程</h2>
+              <h2 id="result-title">基础牌义与牌位导读</h2>
             </div>
             <button class="secondary-button" id="copy-reading" type="button">复制释读</button>
           </div>
+          <p class="result-guide-note">以下导读按抽到的牌、方向与固定牌位生成，供你对照问题思考。需要结合具体情境进一步解读，可复制完整牌阵向 AI 提问。</p>
           <blockquote id="question-echo"></blockquote>
           <div class="interpretations" id="interpretations"></div>
           <div class="synthesis">
             <div class="synthesis-mark" aria-hidden="true">✦</div>
             <div>
-              <small>综合线索</small>
-              <p id="synthesis-text"></p>
+              <small>牌阵关系导读</small>
+              <p id="synthesis-text" class="synthesis-guide"></p>
               <strong id="action-text"></strong>
             </div>
           </div>
@@ -273,7 +285,7 @@
     </main>
 
     <footer>
-      <span>MYSTERIUM · DEMO 0.5</span>
+      <span>MYSTERIUM · DEMO 0.6</span>
       <span>牌面：Dodal 主牌＋BnF 历史马赛小牌</span>
       <span>为清醒的自我观察而作</span>
     </footer>
@@ -322,7 +334,8 @@
             <h3>牌阵来源与固定定义</h3>
             <p>
               单张、三张、五张十字、马蹄、二选一与十二宫在现代实践中存在多种位置版本；本站会在抽牌前列明本次采用的固定定义。
-              “凯尔特十字”的十个主体位置及 42 张全景法参考 Waite 1911 年公开文本。本站以完整 78 张牌实现 42 张法的六叠、七叠、分组重洗与六行七张布局，并提供可选的魔术师或女教皇人物牌；人物牌不按性别自动指定，若它原在 42 张中，会从未发的 36 张中随机补位。
+              “凯尔特十字”的十个主体位置及 42 张全景法参考 Waite 1911 年公开文本。本站凯尔特十字是现代十张简化版：不设原法的代表牌，采用一次洗牌与随机切牌，第二张交叉牌为便于查看而展开陈列；原法要求的三次洗切未被复现。
+              本站以完整 78 张牌实现 42 张法的六叠、七叠、分组重洗与六行七张布局。原法使用魔术师或女教皇作人物牌，本站允许省略，也不按性别自动指定；使用时人物牌置于牌阵之外，若它原在 42 张中，会从未发的 36 张中随机补位。
             </p>
             <div class="source-links">
               <a href="https://en.wikisource.org/wiki/The_Pictorial_Key_to_the_Tarot/Part_3" target="_blank" rel="noreferrer">Waite · 牌阵原文</a>
@@ -336,7 +349,7 @@
             <h3>随机与逆位</h3>
             <p>
               每次洗牌使用 <code>crypto.getRandomValues()</code> 获取浏览器加密随机数，以拒绝采样避免范围映射的取模偏差，再完成 Fisher–Yates 洗牌与随机切牌。
-              程序会在洗切和取牌后校验张数与唯一性。开启逆位后，完整 78 张牌会在洗牌前各自等概率决定方向；逆位不等同于“坏牌”。
+              程序会在洗切和取牌后校验张数与唯一性。开启逆位后，完整 78 张牌会在洗牌前各自独立以 50% 概率决定逆位；这个比例是本站的现代约定，Waite 原文未规定统一比例。逆位不等同于“坏牌”。使用 42 张人物牌时，该牌不参与结果，其他 77 张牌各有 42/77 的概率进入牌阵；省略人物牌时为 42/78。
             </p>
             <div class="source-links">
               <a href="https://www.w3.org/TR/webcrypto/#Crypto-method-getRandomValues" target="_blank" rel="noreferrer">W3C · Web Crypto 随机源</a>
