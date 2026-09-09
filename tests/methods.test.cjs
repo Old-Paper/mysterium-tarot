@@ -169,15 +169,18 @@ test("all spread sizes use unique cards and keep their pre-shuffle orientation",
     for (const reversed of [false, true]) {
       const app = fixture();
       app.run(`state.spreadId = ${JSON.stringify(id)}; els.reversals.checked = ${reversed};
+        if (state.spreadId === 'waite-celtic-1911') { els.waiteSignificator.value = 'major:1'; els.waiteFacing.value = 'left'; }
         let orientationCalls = 0;
         secureRandomInt = max => { if(max !== 2) throw new Error('Unexpected random bound'); return orientationCalls++ % 2; };
         shuffleDeck = cards => { state.cutIndex = 1; return [...cards]; };
         shuffleCards = cards => [...cards]; prepareDraws();`);
       assert.equal(app.run("state.draws.length"), app.run("activePositions().length"), id);
       assert.equal(app.run("new Set(state.draws.map(drawEntryKey)).size"), app.run("state.draws.length"), id);
-      assert.equal(app.run("orientationCalls"), reversed ? 78 : 0, id);
-      assert.equal(app.run(`state.draws.every(draw => draw.reversed === (${reversed} && CARDS.findIndex(card => drawEntryKey(card) === drawEntryKey(draw)) % 2 === 1))`), true, id);
-      assert.equal(app.run("state.audit.eligibleDeckSize"), 78, id);
+      const original = id === "waite-celtic-1911";
+      assert.equal(app.run("orientationCalls"), original ? 0 : reversed ? 78 : 0, id);
+      assert.equal(app.run(`state.draws.every(draw => draw.reversed === (${!original && reversed} && CARDS.findIndex(card => drawEntryKey(card) === drawEntryKey(draw)) % 2 === 1))`), true, id);
+      assert.equal(app.run("state.audit.eligibleDeckSize"), original ? 77 : 78, id);
+      if (original) assert.equal(app.run("state.draws.some(draw => drawEntryKey(draw) === 'major:1')"), false);
     }
   }
   const app = fixture();
@@ -186,6 +189,36 @@ test("all spread sizes use unique cards and keep their pre-shuffle orientation",
   app.run("state.spreadId = 'full-forty-two'; els.significator.value = '1'; prepareDraws();");
   assert.equal(app.run("state.audit.eligibleDeckSize"), 77);
   assert.equal(app.run("state.draws.some(draw => draw.card.arcana === 'major' && draw.card.id === 1)"), false);
+});
+
+test("Waite 1911 Celtic mode removes the chosen significator and performs exactly three shuffle-cut rounds", () => {
+  const app = fixture();
+  app.run(`state.spreadId = 'waite-celtic-1911'; els.waiteSignificator.value = 'minor:swords-queen';
+    els.waiteFacing.value = 'right'; els.reversals.checked = true;
+    let rounds = 0; shuffleDeck = cards => { rounds += 1; state.cutIndex = rounds; return [...cards].reverse(); };
+    prepareDraws();`);
+  assert.equal(app.run("rounds"), 3);
+  assert.deepEqual(app.json("state.audit.cutIndices"), [1, 2, 3]);
+  assert.equal(app.run("state.audit.spreadMethod"), "waite-celtic-1911");
+  assert.equal(app.run("state.audit.eligibleDeckSize"), 77);
+  assert.equal(app.run("state.audit.significator"), "宝剑王后");
+  assert.equal(app.run("state.audit.significatorFacing"), "right");
+  assert.equal(app.run("state.audit.reversalsEnabled"), false);
+  assert.equal(app.run("state.draws.length"), 10);
+  assert.equal(app.run("new Set(state.draws.map(drawEntryKey)).size"), 10);
+  assert.equal(app.run("state.draws.some(draw => drawEntryKey(draw) === 'minor:swords-queen')"), false);
+  assert.match(app.run("auditReceipt()"), /三轮.*三次切点 1 \/ 2 \/ 3.*代表牌 宝剑王后.*面向右/s);
+  assert.match(app.run("buildAiPrompt()"), /第 7 节没有规定制造逆位.*仅使用正位/s);
+});
+
+test("Waite 1911 Celtic mode refuses a missing significator or undetermined facing", () => {
+  const app = fixture();
+  app.run("state.spreadId = 'waite-celtic-1911';");
+  assert.throws(() => app.run("prepareDraws()"), /代表牌与面向/);
+  app.run("els.waiteSignificator.value = 'major:8';");
+  assert.throws(() => app.run("prepareDraws()"), /代表牌与面向/);
+  app.run("els.waiteFacing.value = 'left'; prepareDraws();");
+  assert.equal(app.run("state.significator.name"), "正义");
 });
 
 test("completed reading snapshot is deeply frozen and exported text ignores later DOM changes", () => {
@@ -320,7 +353,9 @@ test("random source failure clears partial state and re-enables the question con
 test("all structural guides include every drawn card with a unique global position reference", () => {
   for (const id of fixture().json("SPREADS.map(spread => spread.id)")) {
     const app = fixture();
-    app.run(`state.spreadId = ${JSON.stringify(id)}; prepareDraws();`);
+    app.run(`state.spreadId = ${JSON.stringify(id)};
+      if (state.spreadId === 'waite-celtic-1911') { els.waiteSignificator.value = 'major:1'; els.waiteFacing.value = 'left'; }
+      prepareDraws();`);
     const text = app.run("buildSynthesisText()");
     const cards = app.json("state.draws.map(draw => draw.card.name)");
     cards.forEach((name, index) => {

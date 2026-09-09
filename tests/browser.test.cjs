@@ -143,6 +143,7 @@ async function assertZodiacOrder(page) {
   const configs = [
     { id: 'single', count: 1 }, { id: 'three', count: 3 }, { id: 'cross-five', count: 5 },
     { id: 'horseshoe', count: 7 }, { id: 'choice', count: 7 }, { id: 'celtic-cross', count: 10 },
+    { id: 'waite-celtic-1911', count: 10, waite: true },
     { id: 'zodiac', count: 12 }, { id: 'zodiac', count: 13, theme: true },
     { id: 'full-forty-two', count: 42, lineMode: true }
   ];
@@ -150,6 +151,13 @@ async function assertZodiacOrder(page) {
     await test(`desktop ${config.id}/${config.count}: sequential reveal, complete exports, no overflow`, async () => {
       const page = await fresh(desktop, config.id);
       if (config.theme) await page.locator('#theme-card').check({ force: true });
+      if (config.waite) {
+        await page.locator('#waite-significator').selectOption('major:8');
+        await page.locator('#waite-facing').selectOption('left');
+        assert.equal(await page.locator('#reversals').isDisabled(), true);
+        assert.equal(await page.locator('#reversals').isChecked(), false);
+        assert.equal(await page.locator('.waite-significator-display img').getAttribute('alt'), '正义，代表牌正面置中');
+      }
       assert.equal(await page.locator('.tarot-card').count(), config.count);
       if (config.id === 'zodiac') await assertZodiacOrder(page);
       await assertNoPageOverflow(page);
@@ -166,11 +174,57 @@ async function assertZodiacOrder(page) {
           await page.locator('#reading-result').evaluate(node => node.scrollIntoView({ behavior: 'instant', block: 'start' }));
           await page.screenshot({ path: path.join(work, 'browser-regression-42-desktop-result.png') });
         }
-      } else assert.equal(await page.locator('.interpretation-card').count(), config.count);
+      } else {
+        assert.equal(await page.locator('.interpretation-card').count(), config.count);
+        if (config.waite) {
+          const prompt = await clipboard(page, '#copy-ai-prompt');
+          assert.match(prompt, /连续完成三轮 Fisher–Yates 洗牌及随机切牌/);
+          assert.match(prompt, /代表牌为正义.*面向左/s);
+          assert.match(prompt, /第 7 节没有规定制造逆位.*仅使用正位/s);
+          assert.equal(await page.locator('.orientation-badge').filter({ hasText: '逆位' }).count(), 0);
+          assert.equal(await page.locator('#waite-follow-up').isVisible(), true);
+        }
+      }
       await assertNoPageOverflow(page);
       await page.close();
     });
   }
+
+  await test('Waite 1911 original mode validates settings, overlays covers/crosses, and can reuse card 10', async () => {
+    const page = await fresh(desktop, 'waite-celtic-1911');
+    assert.ok(await page.locator('#waite-original-note').isVisible());
+    await page.locator('#shuffle-button').click();
+    assert.match(await page.locator('#toast').textContent(), /选择代表/);
+    await page.locator('#waite-significator').selectOption('major:1');
+    await page.locator('#shuffle-button').click();
+    assert.match(await page.locator('#toast').textContent(), /确认代表牌面向/);
+    await page.locator('#waite-facing').selectOption('left');
+    const centers = await page.evaluate(() => {
+      const center = selector => {
+        const rect = document.querySelector(selector).getBoundingClientRect();
+        return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
+      };
+      return {
+        first: center('#card-grid [data-index="0"] .tarot-card'),
+        second: center('#card-grid [data-index="1"] .tarot-card'),
+        sig: center('#card-grid .waite-significator-display img')
+      };
+    });
+    assert.ok(Math.abs(centers.first.x - centers.second.x) < 4 && Math.abs(centers.first.y - centers.second.y) < 4);
+    assert.ok(
+      Math.abs(centers.first.x - centers.sig.x) < 20 && Math.abs(centers.first.y - centers.sig.y) < 20,
+      JSON.stringify(centers)
+    );
+    await start(page);
+    await revealAll(page, 10);
+    await page.screenshot({ path: path.join(root, 'work', 'browser-regression-waite-1911-desktop.png'), fullPage: true });
+    const tenthName = await page.evaluate(() => state.draws[9].card.name);
+    await page.locator('#waite-follow-up').click();
+    assert.equal(await page.evaluate(() => state.phase), 'idle');
+    assert.equal(await page.locator('#waite-significator option:checked').textContent().then(text => text.includes(tenthName)), true);
+    assert.equal(await page.locator('#waite-facing').inputValue(), '');
+    await page.close();
+  });
 
   await test('42 card summary mode + chosen significator excluded from 42 unique records', async () => {
     const page = await fresh(desktop, 'full-forty-two');
