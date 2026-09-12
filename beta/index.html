@@ -6,21 +6,25 @@
     <meta name="theme-color" content="#17140f" />
     <meta
       name="description"
-      content="使用完整 78 张马赛体系组合牌库，支持单张、三张、十字、马蹄、二选一、现代凯尔特十字、Waite 1911 凯尔特十字原法、十二宫与四十二张综合牌阵。"
+      content="可选完整 Camoin 历史马赛牌、Waite–Smith 书中黑白图版或原马赛组合，分开标注历史资料与现代中文释义，支持三张、凯尔特十字、42 张及真实余牌续读。"
     />
-    <title>Mysterium · 古典马赛塔罗 Demo</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Mysterium · 0.10 测试版</title>
     <link rel="icon" href="assets/seal.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=20260909-waite1911" />
-    <script src="app.js?v=20260909-waite1911" defer></script>
-    <!-- BETA ENTRY STYLE: isolated from the existing site -->
-    <style id="beta-entry-style">
-      #beta-entry-link { position: fixed; right: max(12px, env(safe-area-inset-right)); bottom: max(12px, env(safe-area-inset-bottom)); z-index: 30; display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border: 1px solid #b59656; border-radius: 4px; background: #211b11; color: #ead3a0; box-shadow: 0 4px 18px #0008; font: 13px/1.5 Georgia, "Noto Serif SC", serif; text-decoration: none; }
-      #beta-entry-link:hover { background: #342919; border-color: #e3c989; }
-      #beta-entry-link:focus-visible { outline: 2px solid #f4d99d; outline-offset: 3px; }
-      #beta-entry-link small { color: #c6aa74; font: 10px/1.5 Georgia, serif; letter-spacing: .08em; }
-      @media (max-width: 700px) { #beta-entry-link { box-sizing: border-box; min-height: 44px; padding: 9px 12px; font-size: 14px; } }
-    </style>
-    <!-- END BETA ENTRY STYLE -->
+    <link rel="stylesheet" href="styles.css?v=20260912-010" />
+    <link rel="stylesheet" href="practice.css?v=20260912-010" />
+    <link rel="stylesheet" href="workbench.css?v=20260912-010" />
+    <script src="engine.js?v=20260912-010" defer></script>
+    <script src="waite-data.js?v=20260912-010" defer></script>
+    <script src="waite-zh.js?v=20260912-010" defer></script>
+    <script src="marseille-data.js?v=20260912-010" defer></script>
+    <script src="decks.js?v=20260912-010" defer></script>
+    <script src="app.js?v=20260912-010" defer></script>
+    <script src="journal.js?v=20260912-010" defer></script>
+    <script src="practice.js?v=20260912-010" defer></script>
+    <script src="references.js?v=20260912-010" defer></script>
+    <script src="workbench.js?v=20260912-010" defer></script>
+    <script src="prompt-tools.js?v=20260912-010" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#reading-table">直接进入牌桌</a>
@@ -34,7 +38,7 @@
         <span class="brand-seal" aria-hidden="true">✦</span>
         <span>
           <strong>MYSTERIUM</strong>
-          <small>古典马赛塔罗习作</small>
+          <small>0.10 测试版 · 正式版独立保留</small>
         </span>
       </a>
 
@@ -114,6 +118,7 @@
                 type="button"
                 role="tab"
                 aria-selected="false"
+                tabindex="-1"
                 aria-controls="write-panel"
                 data-mode="write"
               >输入问题</button>
@@ -123,7 +128,7 @@
               <span class="meditation-mark" aria-hidden="true">☽</span>
               <div class="meditation-intro">
                 <strong>把问题安静地放在心里</strong>
-                <p>闭上眼，缓慢呼吸三次，在心中默念你的问题。无需输入，准备好后即可开始抽牌。</p>
+                <p>在心中明确问题或观察意向，无需输入。准备好后即可开始。</p>
               </div>
             </div>
 
@@ -151,7 +156,7 @@
               <span class="method-icon" aria-hidden="true">78</span>
               <div>
                 <small>牌组</small>
-                <strong>马赛体系组合牌库 · 完整 78 张</strong>
+                <strong id="method-deck-name">马赛体系组合牌库 · 完整 78 张</strong>
               </div>
             </div>
             <div class="method-row">
@@ -321,8 +326,8 @@
     </main>
 
     <footer>
-      <span>MYSTERIUM · DEMO 0.7</span>
-      <span>牌面：Dodal 主牌＋BnF 历史马赛小牌</span>
+      <span>MYSTERIUM · BETA 0.10 · 公开测试版</span>
+      <span>马赛组合 / Camoin 原扫描 / Waite–Smith 书中图版</span>
       <span>为清醒的自我观察而作</span>
     </footer>
 
@@ -341,6 +346,7 @@
             <h3>牌面传统</h3>
             <p>
               本站的 78 张组合牌库由两套史料拼合：22 张主牌继续使用约 1701 年的 Jean Dodal 马赛图像；56 张小牌取自法国国家图书馆所藏、依 Nicolas Conver 模式制作的另一套历史马赛牌扫描，两者不冒充同一副古牌。
+              另可选择同一副馆藏的完整 78 张 Camoin 历史马赛原扫描（目录年代约 1890—1900），或 Waite–Smith 书中黑白图版。逐牌来源在“图版词典”中查阅；不同牌面不改变本站现代中文基础释义的归属。
               小牌保留钱币、圣杯、宝剑、权杖四组各 14 张的传统点数牌结构，不套用后期的叙事插画。
             </p>
             <div class="source-links">
@@ -370,7 +376,7 @@
             <h3>牌阵来源与固定定义</h3>
             <p>
               单张、三张、五张十字、马蹄、二选一与十二宫在现代实践中存在多种位置版本；本站会在抽牌前列明本次采用的固定定义。
-              “凯尔特十字”的十个主体位置及 42 张全景法参考 Waite 1911 年公开文本。本站保留易用的现代十张简化版，同时另设“Waite 1911 凯尔特十字原法”：先选代表牌并正面置中，对剩余 77 张连续洗切三次，第 1 张覆盖代表牌，第 2 张横跨第 1 张，再按原文方向放置其余牌。这里的“原法”指第 7 节操作步骤；牌面仍为本站的历史马赛组合牌，中文牌义仍是现代整理。
+              “凯尔特十字”的十个主体位置及 42 张全景法参考 Waite 1911 年公开文本。本站保留易用的现代十张简化版，同时另设“Waite 1911 凯尔特十字原法”：先选代表牌并正面置中，对剩余 77 张连续洗切三次，第 1 张覆盖代表牌，第 2 张横跨第 1 张，再按原文方向放置其余牌。这里的“原法”指第 7 节操作步骤；牌面可在开始前选择马赛组合或 Waite–Smith 书中黑白图版，中文基础牌义仍是现代整理，不冒充原文翻译。
               本站以完整 78 张牌实现 42 张法的六叠、七叠、分组重洗与六行七张布局。原法使用魔术师或女教皇作人物牌，本站允许省略，也不按性别自动指定；使用时人物牌置于牌阵之外，若它原在 42 张中，会从未发的 36 张中随机补位。
             </p>
             <div class="source-links">
@@ -385,7 +391,7 @@
             <h3>随机与逆位</h3>
             <p>
               每次洗牌使用 <code>crypto.getRandomValues()</code> 获取浏览器加密随机数，以拒绝采样避免范围映射的取模偏差，再完成 Fisher–Yates 洗牌与随机切牌。
-              程序会在洗切和取牌后校验张数与唯一性。开启逆位后，完整 78 张牌会在洗牌前各自独立以 50% 概率决定逆位；这个比例是本站的现代约定，Waite 原文未规定统一比例。逆位不等同于“坏牌”。使用 42 张人物牌时，该牌不参与结果，其他 77 张牌各有 42/77 的概率进入牌阵；省略人物牌时为 42/78。
+              程序会在洗切和取牌后校验张数与唯一性。方向可采用逐牌独立 50% 随机（现代约定），或将一叠牌在平面旋转 180°（方向改变、牌序不变）。Waite §8 说转动部分牌，未规定固定比例；§7 未指定制造逆位，不等于禁止逆位。35 张续读继承余牌方向。逆位不等同于“坏牌”。使用 42 张人物牌时，在安全随机的均匀洗牌与补位模型下，其他 77 张牌各有 42/77 的入阵概率；省略人物牌时为 42/78。这是入阵概率，不是预测准确率。
             </p>
             <div class="source-links">
               <a href="https://www.w3.org/TR/webcrypto/#Crypto-method-getRandomValues" target="_blank" rel="noreferrer">W3C · Web Crypto 随机源</a>
@@ -406,8 +412,5 @@
     </dialog>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <!-- BETA ENTRY: opens separately and does not modify this reading -->
-    <a id="beta-entry-link" href="beta/" target="_blank" rel="noopener noreferrer" aria-label="体验测试版，在新标签页打开，当前正式版阅读保持不变"><small>BETA</small><span>体验测试版 ↗</span></a>
-    <!-- END BETA ENTRY -->
   </body>
 </html>
